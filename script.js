@@ -1,5 +1,5 @@
 function sayHi() {
   const msg = document.getElementById('message');
-  msg.textContent = "You are fabulous and this page knows it. 💅";
+  msg.textContent = "and you are the JavaScript to my DOM... 🚀✨";
 }
 
