@@ -1,26 +1,113 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.9.0/lib/p5.min.js"></script>
+    <style>
+    body {
+      background-color: #1f2335;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    </style>
+  </head>
+  <body>
 
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-78TW3CD373"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-78TW3CD373');
-</script>
+    <script src="yen.js"></script>
+    <script src="yen_fft.js"></script>
+    <script>
+      let canvas;
+      let time = 0;
+      let path = [];
+      let epicycles = [];
 
-  <meta charset="UTF-8">
-  <title>Hello Darling</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <h1>Hello, sweetheart! 💖</h1>
-  <p id="message">Click the button to feel loved.</p>
-  <button onclick="sayHi()">Click Me</button>
+      function setup() {
+        canvas = createCanvas(600, 600);
+        canvas.style('border', '1px solid white');
+        //createCanvas(windowWidth, windowHeight);
+        //canvas.position((windowWidth - width) / 2, 0)
+        canvas.position((windowWidth - width) / 2, (windowHeight - height) / 2)
+        background(36, 40, 59); //rgb(36, 40, 59)
 
-  <script src="script.js"></script>
-</body>
+        // Take the first 30 and shuffle them
+        //epicycles = shuffle(pfft.slice(0, 30));
+        epicycles = shuffle(pfft);
+      }
+
+      function draw() {
+        //noLoop(); // only draw once
+        background(36, 40, 59);
+
+        translate(width / 2, height / 2 - 20); //move origin
+        scale(1, -1); //y goes up
+        scale(width / 1000, height / 1000);
+
+        // background shape
+        //noStroke();
+        //fill(255,255,255,80); //rgb(192, 202, 245)
+        //fill(100);
+        //stroke(86, 110, 166);
+        stroke(255,255,255,80);
+        strokeWeight(3);
+        noFill();
+        beginShape();
+        for (let pt of points) {
+          //ellipse(pt.x, pt.y, 10, 10); // small dot
+          vertex(pt.x, pt.y);
+        }
+        endShape();
+
+        let x = 0;
+        let y = 0;
+
+        for (let term of epicycles) {
+          let prevX = x;
+          let prevY = y;
+
+          let freq = term.f;
+          let radius = term.A;
+          let phase = term.p;
+
+          let angle = TWO_PI * freq * time + phase;
+
+          x += radius * cos(angle);
+          y += radius * sin(angle);
+
+          // circles
+          stroke(100);
+          strokeWeight(1) //1 is default
+          noFill();
+          ellipse(prevX, prevY, radius * 2);
+
+          // arrow lines, white
+          stroke(255);
+          //strokeWeight(1) //1 is default
+          //noFill();
+          line(prevX, prevY, x, y);
+        }
+
+        path.unshift(createVector(x, y));
+        if (path.length > 600) path.pop();
+
+        // draw path shape
+        //stroke(255, 0, 0); //red
+        stroke(255, 158, 100); //orange
+        //noFill();
+        strokeWeight(4)
+        beginShape();
+        for (let v of path) {
+          vertex(v.x, v.y);
+        }
+        endShape();
+
+        time += 1 / 500;
+      }
+
+      </script>
+
+  </body>
 </html>
 
