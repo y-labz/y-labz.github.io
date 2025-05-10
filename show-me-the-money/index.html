@@ -25,7 +25,9 @@
       let epicycles = [];
 
       function setup() {
-        canvas = createCanvas(600, 600);
+        let winW = Math.min(windowWidth, windowHeight);
+        let canW = Math.round(winW * 0.9);
+        canvas = createCanvas(canW, canW);
         canvas.style('border', '1px solid white');
         //createCanvas(windowWidth, windowHeight);
         //canvas.position((windowWidth - width) / 2, 0)
