@@ -28,7 +28,7 @@
         let winW = Math.min(windowWidth, windowHeight);
         let canW = Math.round(winW * 0.9);
         canvas = createCanvas(canW, canW);
-        canvas.style('border', '1px solid white');
+        canvas.style('border', '2px solid grey');
         //createCanvas(windowWidth, windowHeight);
         //canvas.position((windowWidth - width) / 2, 0)
         canvas.position((windowWidth - width) / 2, (windowHeight - height) / 2)
@@ -53,7 +53,7 @@
         //fill(100);
         //stroke(86, 110, 166);
         stroke(255,255,255,80);
-        strokeWeight(3);
+        strokeWeight(4);
         noFill();
         beginShape();
         for (let pt of points) {
@@ -80,13 +80,13 @@
 
           // circles
           stroke(100);
-          strokeWeight(1) //1 is default
+          strokeWeight(2) //1 is default
           noFill();
           ellipse(prevX, prevY, radius * 2);
 
           // arrow lines, white
           stroke(255);
-          //strokeWeight(1) //1 is default
+          strokeWeight(2) //1 is default
           //noFill();
           line(prevX, prevY, x, y);
         }
