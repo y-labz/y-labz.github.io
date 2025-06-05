@@ -7,7 +7,6 @@ const banner = `
 `;
 
 const gameDim = 128 //config
-// const cellSize = 10; // each cell is 10x10 pixels
 
 let grid = new Array(gameDim);
 let grid2 = new Array(gameDim); //next iteration grid
@@ -103,25 +102,6 @@ console.log = function (...args) {
   }
 };
 
-function logToHtml(html) {
-  const logLine = document.createElement('div');
-  logLine.innerHTML = html;
-  logLine.style.whiteSpace = "pre-wrap";
-
-  const logWindow = document.getElementById("log");
-  if (logWindow) {
-    logWindow.appendChild(logLine);
-
-    // Trim to last 100 logs
-    const maxLogs = 100;
-    while (logWindow.children.length > maxLogs) {
-      logWindow.removeChild(logWindow.firstChild);
-    }
-
-    logWindow.scrollTop = logWindow.scrollHeight;
-  }
-}
-
 //-----------------------------------------------------
 function setupWindow() {
   // Get the smaller of width or height
@@ -158,7 +138,6 @@ function setupWindow() {
   }
 
   console.log(banner);
-  // console.log('\x1b[1m%s\x1b[0m', banner); // Bold
   console.log("Conway's Game of Life");
   console.log("... implemented by y-labz, 2025-06 🚀");
   console.log("... game dimension: " + gameDim + "x" + gameDim);
@@ -183,8 +162,6 @@ function setupWindow() {
   console.log("... randomized grid with 10% chance alive");
   console.log("... after one iteration:");
   console.log("... initPop = " + initPop);
-  // canvas.style.width = L0 - 36 + "px";
-  // canvas.style.height = L0 - 36 + "px";
   canvas.style.width = L0 - 4 + "px";
   canvas.style.height = L0 - 4 + "px";
   canvas.style.imageRendering = "pixelated";
@@ -195,10 +172,6 @@ function setupWindow() {
 
 function padNumber(num, width) {
   return num.toString().padStart(width, '0');
-}
-
-function formatPercent(num) {
-  return num.toFixed(1).padStart(4, '0') + '%';
 }
 
 function drawGrid() {
@@ -216,40 +189,27 @@ function drawGrid() {
       }
     }
   }
-  // console.log("... current population: " + pop)
+
+  // add my fancy progress bar
+  const formPop = padNumber(pop, 4);
   const logWindow = document.getElementById("log");
   const logWidth = logWindow.getBoundingClientRect().width;
   // For font-size: 16px, Courier New chars are usually ~9px wide.
   const charWidth = 9;
-  // add my fancy progress bar
   const percent = (pop / (gameDim * gameDim)) * 100;
-  // const growth = 100 * (pop - initPop) / initPop;
   const maxPercent = 7; //zoom in a bit
-  // const barLength = 40; // Number of bar segments
   const barLength = Math.floor(0.9 * (logWidth-36-charWidth*18)/charWidth);
   // const filled = Math.round((percent / 100) * barLength);
   const filled = Math.round(barLength * Math.min(percent, maxPercent) / maxPercent);
-  // Format
-  const formPop = padNumber(pop, 4); //most die after 1 iteration
-  // const formPercent = formatPercent(percent);
-  // const formGrow = formatPercent(growth);
-  // Construct colored HTML bar
-  // const filledBar = "<span style='color:#0f0'>" + "█".repeat(filled) + "</span>";
-  // const emptyBar = "<span style='color:#222'>" + "█".repeat(barLength - filled) + "</span>";
   const filledBar = "█".repeat(filled);
   const emptyBar = "░".repeat(barLength - filled);
   const progressBar = `${filledBar}${emptyBar}`;
 
-  // Output with HTML to log
-  // const logMessage = `population: ${formPop} (${formPercent}) ${progressBar}`;
-  // const logMessage = `population: ${formPop} (${formGrow}) ${progressBar}`;
   const logMessage = `population: ${formPop}  ${progressBar}`;
-  // logToHtml(logMessage);
   console.log(logMessage);
-
 }
 
-// Main animation loop
+//-----------------------------------------------------
 function loop() {
   updateGrid();
   drawGrid();
@@ -257,32 +217,9 @@ function loop() {
   setTimeout(loop, 100); // 100 ms pause = 10 frames per second
 }
 
-
-
-//-----------------------------------------------------
 setupWindow();
 console.log("... game starting now ...");
 console.log("... ...");
+// for (let i = 0; i < 10; i++) { loop(); }
 loop();
-// for (let i = 0; i < 100; i++) { loop(); }
 
-
-// Draw the grid on canvas
-// imageData: more efficient for large grid
-// function drawGrid() {
-//   const imageData = ctx.createImageData(width, height);
-//   const data = imageData.data;
-//   for (let y = 0; y < height; y++) {
-//     for (let x = 0; x < width; x++) {
-//       const idx = (y * width + x) * 4;
-//       const alive = grid[y][x];
-//       const color = alive ? 0 : 20;
-//       // bright green for alive, dark green for dead
-//       data[idx] = 0;       // R
-//       data[idx + 1] = color; // G
-//       data[idx + 2] = 0;   // B
-//       data[idx + 3] = 255; // A
-//     }
-//   }
-//   ctx.putImageData(imageData, 0, 0);
-// }
