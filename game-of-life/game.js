@@ -100,6 +100,7 @@ function logToHtml(html) {
   }
 }
 
+//-----------------------------------------------------
 function setupWindow() {
   // Get the smaller of width or height
   let L0 = Math.min(window.innerWidth, window.innerHeight);
@@ -166,6 +167,14 @@ function setupWindow() {
   console.log("... setupWindow() ... done");
 }
 
+function padNumber(num, width) {
+  return num.toString().padStart(width, '0');
+}
+
+function formatPercent(num) {
+  return num.toFixed(1).padStart(4, '0') + '%';
+}
+
 function drawGrid() {
   const canvas = document.getElementById('game');
   const ctx = canvas.getContext("2d");
@@ -183,17 +192,22 @@ function drawGrid() {
   }
   // console.log("... current population: " + pop)
   // add my fancy progress bar
-  const popPercent = (pop / (gameDim * gameDim)) * 100;
+  const percent = (pop / (gameDim * gameDim)) * 100;
+  const maxPercent = 7; //zoom in a bit
   const barLength = 50; // Number of bar segments
-  const filledLength = Math.round((popPercent / 100) * barLength);
-
+  // const filled = Math.round((percent / 100) * barLength);
+  const filled = Math.round(barLength * Math.min(percent, maxPercent) / maxPercent);
+  // Format
+  const formPop = padNumber(pop, 5);
+  // const formPercent = formatPercent(percent);
   // Construct colored HTML bar
-  const filledBar = "<span style='color:#0f0'>" + "█".repeat(filledLength) + "</span>";
-  const emptyBar = "<span style='color:#222'>" + "█".repeat(barLength - filledLength) + "</span>";
+  const filledBar = "<span style='color:#0f0'>" + "█".repeat(filled) + "</span>";
+  const emptyBar = "<span style='color:#222'>" + "█".repeat(barLength - filled) + "</span>";
   const progressBar = `[${filledBar}${emptyBar}]`;
 
   // Output with HTML to log
-  const logMessage = `current population: ${pop} (${popPercent.toFixed(1)}%) ${progressBar}`;
+  // const logMessage = `population: ${formPop} (${formPercent}) ${progressBar}`;
+  const logMessage = `population: ${formPop} ${progressBar}`;
   logToHtml(logMessage);
 
 }
