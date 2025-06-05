@@ -1,0 +1,30 @@
+Copyright 2025 y-labz
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to use,
+copy, modify, and distribute the Software for private and non-commercial purposes only,
+subject to the following conditions:
+
+1. Commercial use of this Software — including but not limited to selling it,
+   using it in a paid product or service, or generating revenue in any way
+   — is not permitted without prior written permission from the author.
+
+   If you wish to use the Software commercially, you must contact the author
+   at professor.dr.y@gmail.com to request a commercial license. A revenue-sharing agreement
+   may be required.
+
+2. This license applies **only** to the source code within this repository.
+   Any included fonts, icons, images, or other third-party assets are
+   subject to their own licenses and are **not** covered by this license.
+
+3. This license grants no trademark rights and does not imply any warranty
+   or guarantee of fitness for any purpose. Use at your own fabulous risk.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM,
+DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+Third-Party Libraries:
+- This project uses p5.js (MIT License), which is not subject to the terms of this license.
