@@ -198,15 +198,18 @@ function drawGrid() {
   const charWidth = 9;
   const percent = (pop / (gameDim * gameDim)) * 100;
   const maxPercent = 7; //zoom in a bit
-  const barLength = Math.floor(0.9 * (logWidth-36-charWidth*18)/charWidth);
+  // const barLength = Math.floor(0.9 * (logWidth-36-charWidth*18)/charWidth);
+  const barLength = Math.floor(0.9 * (logWidth-36-charWidth*2)/charWidth);
   // const filled = Math.round((percent / 100) * barLength);
   const filled = Math.round(barLength * Math.min(percent, maxPercent) / maxPercent);
   const filledBar = "█".repeat(filled);
   const emptyBar = "░".repeat(barLength - filled);
-  const progressBar = `${filledBar}${emptyBar}`;
+  const progressBar = `|${filledBar}${emptyBar}|`;
 
-  const logMessage = `population: ${formPop}  ${progressBar}`;
+  // const logMessage = `population: ${formPop}  ${progressBar}`;
+  const logMessage = `population: ${formPop}`;
   console.log(logMessage);
+  console.log(progressBar);
 }
 
 //-----------------------------------------------------
