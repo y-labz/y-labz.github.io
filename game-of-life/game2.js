@@ -1,11 +1,3 @@
-const banner = `
-      ▜   ▌    
-  ▌▌▄▖▐ ▀▌▛▌▀▌ 
-  ▙▌  ▐▖█▌▙▌▙▖.
-  ▄▌           
-               
-`;
-
 const gameDim = 128 //config
 // const cellSize = 10; // each cell is 10x10 pixels
 
@@ -16,27 +8,16 @@ for (let i = 0; i < gameDim; i++) {
   grid2[i] = new Array(gameDim);
 }
 
-let initPop = 0;
 // Randomize initial grid state: 0 = dead, 1 = alive
 function randomizeGrid() {
   for (let y = 0; y < gameDim; y++) { //y is row id
     for (let x = 0; x < gameDim; x++) { //x is col id
-      grid[y][x] = Math.random() < 0.1 ? 1 : 0; // chance alive
-      // initPop += grid[y][x];
+      grid[y][x] = Math.random() < 0.1 ? 1 : 0; // 30% chance alive
     }
   }
 }
 randomizeGrid();
 
-function countPop(grid) {
-  let res = 0;
-  for (let y = 0; y < gameDim; y++) { //y is row id
-    for (let x = 0; x < gameDim; x++) { //x is col id
-      res += grid[y][x];
-    }
-  }
-  return res;
-}
 // Count live neighbors around (x,y)
 function countNeighbors(x, y) {
   let count = 0;
@@ -70,9 +51,6 @@ function updateGrid() {
   // Swap grids, update grid
   [grid, grid2] = [grid2, grid];
 }
-
-updateGrid(); //50 to 60 % init pop die after 1 iteration, alone
-initPop = countPop(grid);
 
 //-----------------------------------------------------
 // Backup the original log function, just in case
@@ -157,10 +135,8 @@ function setupWindow() {
     document.body.appendChild(logWindow);
   }
 
-  console.log(banner);
-  // console.log('\x1b[1m%s\x1b[0m', banner); // Bold
   console.log("Conway's Game of Life");
-  console.log("... implemented by y-labz, 2025-06 🚀");
+  console.log("... implemented by y-labz, 2025-06");
   console.log("... game dimension: " + gameDim + "x" + gameDim);
   console.log("... setup container and log ... done");
 
@@ -180,9 +156,7 @@ function setupWindow() {
     }
   }
   console.log("... setup canvas and draw initial grid ... done");
-  console.log("... randomized grid with 10% chance alive");
-  console.log("... after one iteration:");
-  console.log("... initPop = " + initPop);
+  console.log("... (randomized grid with 10% chance alive)");
   // canvas.style.width = L0 - 36 + "px";
   // canvas.style.height = L0 - 36 + "px";
   canvas.style.width = L0 - 4 + "px";
@@ -217,35 +191,24 @@ function drawGrid() {
     }
   }
   // console.log("... current population: " + pop)
-  const logWindow = document.getElementById("log");
-  const logWidth = logWindow.getBoundingClientRect().width;
-  // For font-size: 16px, Courier New chars are usually ~9px wide.
-  const charWidth = 9;
   // add my fancy progress bar
   const percent = (pop / (gameDim * gameDim)) * 100;
-  // const growth = 100 * (pop - initPop) / initPop;
   const maxPercent = 7; //zoom in a bit
-  // const barLength = 40; // Number of bar segments
-  const barLength = Math.floor(0.9 * (logWidth-36-charWidth*18)/charWidth);
+  const barLength = 50; // Number of bar segments
   // const filled = Math.round((percent / 100) * barLength);
   const filled = Math.round(barLength * Math.min(percent, maxPercent) / maxPercent);
   // Format
-  const formPop = padNumber(pop, 4); //most die after 1 iteration
+  const formPop = padNumber(pop, 5);
   // const formPercent = formatPercent(percent);
-  // const formGrow = formatPercent(growth);
   // Construct colored HTML bar
-  // const filledBar = "<span style='color:#0f0'>" + "█".repeat(filled) + "</span>";
-  // const emptyBar = "<span style='color:#222'>" + "█".repeat(barLength - filled) + "</span>";
-  const filledBar = "█".repeat(filled);
-  const emptyBar = "░".repeat(barLength - filled);
-  const progressBar = `${filledBar}${emptyBar}`;
+  const filledBar = "<span style='color:#0f0'>" + "█".repeat(filled) + "</span>";
+  const emptyBar = "<span style='color:#222'>" + "█".repeat(barLength - filled) + "</span>";
+  const progressBar = `[${filledBar}${emptyBar}]`;
 
   // Output with HTML to log
   // const logMessage = `population: ${formPop} (${formPercent}) ${progressBar}`;
-  // const logMessage = `population: ${formPop} (${formGrow}) ${progressBar}`;
-  const logMessage = `population: ${formPop}  ${progressBar}`;
-  // logToHtml(logMessage);
-  console.log(logMessage);
+  const logMessage = `population: ${formPop} ${progressBar}`;
+  logToHtml(logMessage);
 
 }
 
@@ -262,9 +225,7 @@ function loop() {
 //-----------------------------------------------------
 setupWindow();
 console.log("... game starting now ...");
-console.log("... ...");
 loop();
-// for (let i = 0; i < 100; i++) { loop(); }
 
 
 // Draw the grid on canvas
