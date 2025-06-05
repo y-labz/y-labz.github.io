@@ -1,89 +1,202 @@
-const canvas = document.getElementById("game");
-const ctx = canvas.getContext("2d");
+const gameDim = 128 //config
+// const cellSize = 10; // each cell is 10x10 pixels
 
-// Canvas size in pixels
-const width = 600;
-const height = 400;
-canvas.width = width;
-canvas.height = height;
-
-// Grid setup
-const cellSize = 10; // each cell is 10x10 pixels
-const cols = Math.floor(width / cellSize);
-const rows = Math.floor(height / cellSize);
-
-// Create the grid array
-let grid = new Array(rows);
-
-for (let i = 0; i < rows; i++) {
-  grid[i] = new Array(cols);
+let grid = new Array(gameDim);
+let grid2 = new Array(gameDim); //next iteration grid
+for (let i = 0; i < gameDim; i++) {
+  grid[i] = new Array(gameDim);
+  grid2[i] = new Array(gameDim);
 }
 
 // Randomize initial grid state: 0 = dead, 1 = alive
 function randomizeGrid() {
-  for (let y = 0; y < rows; y++) {
-    for (let x = 0; x < cols; x++) {
-      grid[y][x] = Math.random() < 0.3 ? 1 : 0; // 30% chance alive
+  for (let y = 0; y < gameDim; y++) { //y is row id
+    for (let x = 0; x < gameDim; x++) { //x is col id
+      grid[y][x] = Math.random() < 0.1 ? 1 : 0; // 30% chance alive
     }
   }
 }
-
 randomizeGrid();
 
-
-function resizeGameContainer() {
-  const container = document.getElementById("game-container");
-
-  // Get the smaller of width or height
-  const size = Math.min(window.innerWidth, window.innerHeight);
-
-  // Apply it to container
-  container.style.width = size + "px";
-  container.style.height = size + "px";
-}
-
-function drawGrid() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  for (let row = 0; row < rows; row++) {
-    for (let col = 0; col < cols; col++) {
-      if (grid[row][col] === 1) {
-        ctx.fillStyle = "#0f0"; // Neon green, baby
-        ctx.fillRect(col * cellSize, row * cellSize, cellSize, cellSize);
+// Count live neighbors around (x,y)
+function countNeighbors(x, y) {
+  let count = 0;
+  for (let dy = -1; dy <= 1; dy++) {
+    for (let dx = -1; dx <= 1; dx++) {
+      if (dx === 0 && dy === 0) continue;
+      let nx = x + dx;
+      let ny = y + dy;
+      if (nx >= 0 && nx < gameDim && ny >= 0 && ny < gameDim) {
+        count += grid[ny][nx];
       }
     }
   }
+  return count;
 }
 
-function resizeCanvas() {
-  resizeGameContainer();
+// Compute next grid state by applying Game of Life rules
+function updateGrid() {
+  for (let y = 0; y < gameDim; y++) {
+    for (let x = 0; x < gameDim; x++) {
+      const alive = grid[y][x];
+      const neighbors = countNeighbors(x, y);
+      //here is the game:
+      if (alive) {
+        grid2[y][x] = (neighbors === 2 || neighbors === 3) ? 1 : 0;
+      } else {
+        grid2[y][x] = (neighbors === 3) ? 1 : 0;
+      }
+    }
+  }
+  // Swap grids, update grid
+  [grid, grid2] = [grid2, grid];
+}
 
-  const container = document.getElementById("game-container");
-  const rect = container.getBoundingClientRect();
+//-----------------------------------------------------
+// Backup the original log function, just in case
+const originalConsoleLog = console.log;
+// Override console.log
+console.log = function (...args) {
+  originalConsoleLog.apply(console, args); // still logs in browser console
 
-  let newWidth = Math.max(rect.width, 128);
-  let newHeight = Math.max(rect.height, 128);
+  const message = args.map(arg =>
+    typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+  ).join(' ');
 
-  canvas.width = newWidth;
-  canvas.height = newHeight;
+  const logLine = document.createElement('div');
+  logLine.textContent = message;
+  logLine.style.whiteSpace = "pre-wrap";
 
-  cols = Math.floor(newWidth / cellSize);
-  rows = Math.floor(newHeight / cellSize);
+  const logWindow = document.getElementById("log");
+  if (logWindow) {
+    logWindow.appendChild(logLine);
 
-  grid = new Array(rows);
-  for (let i = 0; i < rows; i++) {
-    grid[i] = new Array(cols);
+    // 💅 Trim to last 100 logs
+    const maxLogs = 100;
+    while (logWindow.children.length > maxLogs) {
+      logWindow.removeChild(logWindow.firstChild); // remove oldest
+    }
+
+    logWindow.scrollTop = logWindow.scrollHeight;
+  }
+};
+
+function setupWindow() {
+  // Get the smaller of width or height
+  let L0 = Math.min(window.innerWidth, window.innerHeight);
+  let L1 = Math.max(window.innerWidth, window.innerHeight);
+  L0 = L0 - 32; //body margin 8, div margin 8, border 2
+  L1 = L1 - 32 - L0 - 16;
+  const container = document.createElement('div');
+  container.id = "game-container";
+  container.style.width = L0 + "px";
+  container.style.height = L0 + "px";
+  // document.body.appendChild(container);
+
+  // add log window Responsive layout
+  const logWindow = document.createElement('div');
+  logWindow.id = "log";
+  if (window.innerWidth > window.innerHeight) {
+    // Landscape – side by side
+    logWindow.style.height = L0 + "px";
+    logWindow.style.width = L1 + "px";
+    const wrapper = document.createElement('div');
+    wrapper.style.display = "flex";
+    wrapper.style.flexDirection = "row";
+    logWindow.style.flex = "1 1 auto";
+    wrapper.appendChild(container);
+    wrapper.appendChild(logWindow);
+    document.body.appendChild(wrapper);
+  } else {
+    // Portrait – stacked
+    document.body.appendChild(container);
+    logWindow.style.width = L0 + "px";
+    logWindow.style.height = L1 + "px";
+    document.body.appendChild(logWindow);
   }
 
-  randomizeGrid();
-  drawGrid();
+  console.log("Conway's Game of Life");
+  console.log("... implemented by y-labz, 2025-06");
+  console.log("... game dimension: " + gameDim + "x" + gameDim);
+  console.log("... setup container and log ... done");
+
+  //add canvas here, max L0-border2
+  const canvas = document.createElement('canvas');
+  canvas.id = "game"
+  canvas.width = gameDim
+  canvas.height = gameDim
+  const ctx = canvas.getContext("2d");
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  for (let y = 0; y < gameDim; y++) {
+    for (let x = 0; x < gameDim; x++) {
+      if (grid[y][x] === 1) {
+        ctx.fillStyle = "#0f0"; // Neon green, baby
+        ctx.fillRect(x, y, 1, 1);
+      }
+    }
+  }
+  console.log("... setup canvas and draw initial grid ... done");
+  console.log("... (randomized grid with 10% chance alive)");
+  // canvas.style.width = L0 - 36 + "px";
+  // canvas.style.height = L0 - 36 + "px";
+  canvas.style.width = L0 - 4 + "px";
+  canvas.style.height = L0 - 4 + "px";
+  canvas.style.imageRendering = "pixelated";
+  container.appendChild(canvas);
+
+  console.log("... setupWindow() ... done");
 }
 
-resizeCanvas();
+function drawGrid() {
+  const canvas = document.getElementById('game');
+  const ctx = canvas.getContext("2d");
+  let pop = 0;
+  // always clear first!
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  for (let y = 0; y < gameDim; y++) {
+    for (let x = 0; x < gameDim; x++) {
+      if (grid[y][x] === 1) {
+        ctx.fillStyle = "#0f0"; // Neon green, baby
+        ctx.fillRect(x, y, 1, 1);
+        pop = pop + 1;
+      }
+    }
+  }
+  console.log("... current population: " + pop)
+}
 
-let resizeTimeout;
-window.addEventListener("resize", () => {
-  clearTimeout(resizeTimeout);
-  resizeTimeout = setTimeout(resizeCanvas, 100);
-});
+// Main animation loop
+function loop() {
+  updateGrid();
+  drawGrid();
+  // requestAnimationFrame(loop);
+  setTimeout(loop, 100); // 100 ms pause = 10 frames per second
+}
 
+
+
+//-----------------------------------------------------
+setupWindow();
+console.log("... game starting now ...");
+loop();
+
+
+// Draw the grid on canvas
+// imageData: more efficient for large grid
+// function drawGrid() {
+//   const imageData = ctx.createImageData(width, height);
+//   const data = imageData.data;
+//   for (let y = 0; y < height; y++) {
+//     for (let x = 0; x < width; x++) {
+//       const idx = (y * width + x) * 4;
+//       const alive = grid[y][x];
+//       const color = alive ? 0 : 20;
+//       // bright green for alive, dark green for dead
+//       data[idx] = 0;       // R
+//       data[idx + 1] = color; // G
+//       data[idx + 2] = 0;   // B
+//       data[idx + 3] = 255; // A
+//     }
+//   }
+//   ctx.putImageData(imageData, 0, 0);
+// }

@@ -29,7 +29,7 @@ body {
 
 #game-container {
   /* flex: 1 1 auto; */
-  /* display: flex; */
+  display: flex;
   justify-content: center;
   align-items: center;
   background: #222;
@@ -42,12 +42,12 @@ body {
 }
 
 #game {
-  /* width: 98%; */
-  /* height: 98%; */
+  width: 100%;
+  height: auto;
+  max-width: 100%;
   image-rendering: pixelated;
-  /* border: 2px solid #0f0; */
   background: #111;
-  /* display: block; */
+  display: block;
 }
 
 #log {
@@ -56,11 +56,16 @@ body {
   color: #0f0;
   padding: 1rem;
   overflow-y: auto;
-  font-size: 14px;
+  /* font-size: 14px; */
+  font-family: "Courier New", Courier, monospace; /* "Consolas", */
   line-height: 1.2;
   border: 2px solid #0f0;
   margin: 8px;
   box-sizing: border-box;
   /* width: 98%; */
   /* height: 98%; */
+}
+
+#log, #game-container {
+  box-shadow: 0 0 8px #0f0;
 }
