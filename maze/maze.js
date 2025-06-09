@@ -15,6 +15,7 @@ const delay0 = 50; //for fancy log
 const rows = 10;
 const cols = 10;
 const wallThick = 4;
+const wallGlow = 10;
 const cellSize = Math.floor(conL / rows);
 const canL = cellSize * rows; //canvas length
 
@@ -64,13 +65,14 @@ function setupWindow() {
 setupWindow();
 
 //-----------------------------------------------------
-// more declare for the maze
+// more declarations for the maze
 const canvas = document.getElementById('game');
 const ctx = canvas.getContext('2d');
 const grid = [];
 const stack = [];
 const path = [];
 
+let current;
 let solving = false;
 let solvedPath = [];
 let solutionIndex = 0;
@@ -102,7 +104,7 @@ class Cell {
 
     ctx.strokeStyle = "#00faff";
     ctx.shadowColor = "#00ffff";
-    ctx.shadowBlur = 10;
+    ctx.shadowBlur = wallGlow;
     ctx.lineWidth = wallThick;
 
     if (this.walls[0]) drawLine(x, y, x+cellSize, y);
@@ -271,7 +273,7 @@ function typeText1(speed = 80, el, txt) {
   });
 }
 
-function typeText(baseSpeed, el, txt) {
+async function typeText(baseSpeed, el, txt) {
   return new Promise(resolve => {
     const speedCycle = [1, 0.5, 1.5, 2, 0.1, 3]; //config
     let cycleIndex = 0;
@@ -348,26 +350,47 @@ async function processLogQueue() {
   isLogging = false;
 }
 
-function queueLog(message) {
+async function queueLog(message) {
   logQueue.push(message);
-  processLogQueue();
+  await processLogQueue();
 }
-
-// queueLog("testing testing here");
-// queueLog("another line to test");
-// queueLog("yet another one");
 
 //-----------------------------------------------------
-// Grid init
-for (let y = 0; y < rows; y++) {
-  for (let x = 0; x < cols; x++) {
-    grid.push(new Cell(x, y));
+async function initDrawGrid() {
+  for (let y = 0; y < rows; y++) {
+    for (let x = 0; x < cols; x++) {
+      grid.push(new Cell(x, y));
+    }
   }
+  current = grid[Math.floor(Math.random() * grid.length)];
+  // draw the grid walls with init cell
+  ctx.fillStyle = "black";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  for (let i = 0; i < grid.length; i++) {
+    grid[i].show(ctx);
+    await sleep(30);  //miliseconds
+  }
+  current.highlight(ctx);
 }
 
-let current = grid[0];
+async function init() {
+  await sleep(1500);  //miliseconds
+  const now = new Date().toLocaleTimeString();
+  await queueLog("[ " + now + " ]");
+  await queueLog(banner);
+  await queueLog("A TRON-style maze animation using DFS.");
+  await queueLog("Implemented by y-labz, 2025-06 🚀");
+  await queueLog("Initializing GRID...");
+  await initDrawGrid();
+  await sleep(1000);  //miliseconds
+  queueLog("Initialization done.");
+  queueLog("Grid size: " + rows + " x " + cols);
+  queueLog("Init cell x = " + current.x + "; y = " + current.y);
+}
 
-function draw() {
+init();
+
+function mainloop() {
   ctx.fillStyle = "black";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -395,33 +418,16 @@ function draw() {
     animateLightcycle();
   }
 
-  requestAnimationFrame(draw);
+  // requestAnimationFrame(mainloop);
+  setTimeout(mainloop, 100);
 }
 
-draw();
+// mainloop();
 
 
 
 
 
-
-
-
-
-
-//-----------------------------------------------------
-function loop() {
-  // requestAnimationFrame(loop);
-  // setTimeout(loop, 100); // 100 ms pause = 10 frames per second
-}
-
-const now = new Date().toLocaleTimeString();
-queueLog(banner);
-queueLog("... implemented by y-labz, 2025-06 🚀");
-queueLog("... game starting now ...");
-queueLog("... ...");
-// for (let i = 0; i < 20; i++) { loop(); }
-// loop();
 
 
 
