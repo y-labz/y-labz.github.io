@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-78TW3CD373"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-78TW3CD373');
+    </script>
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TRON Maze by y-labz</title>
+    <meta name="description" content="A TRON-style maze animation using Depth-First Search.">
+    <meta name="theme-color" content="#7DFDFE">
+    <link rel="icon" href="../icon/rocket.svg" type="image/svg+xml" />
+    <link rel="preload" href="../fonts/TerminusTTF-4.49.3.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+    <!-- <link rel="stylesheet" href="style.css"> -->
+
+    <!-- Open Graph for social media preview -->
+    <meta property="og:title" content="TRON Maze by y-labz" />
+    <meta property="og:description" content="A TRON-style maze animation using Depth-First Search." />
+    <meta property="og:url" content="https://y-labz.github.io/maze/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://y-labz.github.io/maze/preview.jpg" />
+
+    <style>
+    body {
+      margin: 8px;
+      background: #111;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      /* min-height: 100vh; */
+    }
+
+    #container, #log {
+      border: 2px solid #3DFFFC;
+      margin: 8px;
+      box-sizing: border-box;
+      box-shadow: 0 0 12px #3DFFFC, 0 0 20px #3DFFFC88 inset;
+    }
+
+    #container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #222;
+    }
+
+    #game {
+      width: 100%;
+      height: auto;
+      max-width: 100%;
+      image-rendering: pixelated;
+      background: #111;
+      display: block;
+    }
+
+    #log {
+      color: #7DFDFE;
+      padding: 1rem;
+      overflow-y: auto;
+      font-size: 16px;
+      font-family: "font0", "Courier New", Courier, monospace;
+      line-height: 1.2;
+      scrollbar-width: thin;
+      white-space: pre-wrap;
+      display: inline;
+    }
+
+    @font-face {
+      font-family: 'font0';
+      src: url('../fonts/TerminusTTF-4.49.3.woff2') format('woff2');
+      /* src: url('../fonts/TerminusTTF-Bold-4.49.3.woff2') format('woff2'); */
+      font-weight: normal; /* Regular (400), Bold (700) */
+      font-style: normal;
+      font-display: swap; /* This shows fallback text immediately */
+    }
+
+    #cursor {
+      display: inline-block;
+      width: 10px;
+      height: 1em;
+      background: #00ff00;
+      animation: blink 0.7s steps(2, start) infinite;
+      vertical-align: bottom;
+    }
+
+    #cursor1 {
+      display: inline-block;
+      width: 10px;
+      height: 1em;
+      background: #00ff00;
+      vertical-align: bottom;
+    }
+
+    @keyframes blink {
+      to { background: transparent; }
+    }
+
+    </style>
+  </head>
+
+  <body>
+    <script src="maze.js"></script>
+  </body>
+</html>
+

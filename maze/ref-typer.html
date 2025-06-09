@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Authentic Terminal Typing</title>
+  <style>
+    body {
+      background-color: black;
+      color: #00ff00;
+      font-family: 'Courier New', Courier, monospace;
+      padding: 20px;
+    }
+    #log-container {
+      white-space: pre-wrap;
+      display: inline;
+    }
+    #cursor {
+      display: inline-block;
+      width: 10px;
+      height: 1em;
+      background: #00ff00;
+      animation: blink 0.7s steps(2, start) infinite;
+      vertical-align: bottom;
+    }
+    @keyframes blink {
+      to { background: transparent; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="log-container"></div><div id="cursor"></div>
+
+<script>
+  const messages = [
+    "boot sequence initiated...\n",
+    "locating mainframe...\n",
+    "establishing secure connection...\n",
+    "login: root\n",
+    "password: ********\n",
+    "access granted.\n",
+    "executing payload...\n",
+    "done.\n"
+  ];
+
+  const fullText = messages.join('');
+  const container = document.getElementById('log-container');
+  const cursor = document.getElementById('cursor');
+
+  let index = 0;
+
+  function typeCharByChar(speed = 50) {
+    if (index <= fullText.length) {
+      container.textContent = fullText.slice(0, index);
+      index++;
+      setTimeout(() => typeCharByChar(speed), speed);
+    }
+  }
+
+  // Start typing
+  typeCharByChar();
+</script>
+
+</body>
+</html>
