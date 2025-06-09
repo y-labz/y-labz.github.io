@@ -194,83 +194,31 @@ function getOpenNeighbors(cell) {
 }
 
 function animateLightcycle() {
-  for (let i = 0; i < solvedPath.length; i++) {
-    if (i < solutionIndex) {
-      solvedPath[i].highlight(ctx, "#00ffcc33");
-    }
+  for (let i = 0; i < solutionIndex; i++) {
+    solvedPath[i].highlight(ctx, "#00ffcc33"); // soft trail
   }
 
   if (solutionIndex < solvedPath.length) {
-    // const cell = solvedPath[solutionIndex];
-    // const x = cell.x * cellSize + cellSize / 2;
-    // const y = cell.y * cellSize + cellSize / 2;
-    ctx.fillStyle = "#00ffff";
-    ctx.beginPath();
-    // ctx.arc(x, y, 6, 0, Math.PI * 2);
-    ctx.fill();
+    // Highlight the current position with stronger glow
+    solvedPath[solutionIndex].highlight(ctx, "#00ffff"); 
     solutionIndex += 1;
   }
 }
 
 //-----------------------------------------------------
-// Backup the original log function
-const originalConsoleLog = console.log;
-// Override console.log
-console.log = function (...args) {
-  // still logs in browser console
-  // originalConsoleLog.apply(console, args);
-  // const now = new Date().toLocaleTimeString();
-  const message = args.map(arg =>
-    typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
-  ).join(' ');
-
+function simlog(message) {
+  const logWindow = document.getElementById("log");
+  const cursor = document.getElementById("cursor");
+  // simply put the message above the cursor
   const logLine = document.createElement('div');
   logLine.textContent = message;
-  // logLine.textContent = `[${now}] ${message}`;
   logLine.style.whiteSpace = "pre-wrap";
-
-  const logWindow = document.getElementById("log");
-  if (logWindow) {
-    logWindow.appendChild(logLine);
-    // Trim to last 100 logs
-    const maxLogs = 100;
-    while (logWindow.children.length > maxLogs) {
-      logWindow.removeChild(logWindow.firstChild); // remove oldest
-    }
-    logWindow.scrollTop = logWindow.scrollHeight;
-  }
+  logWindow.insertBefore(logLine, cursor);
+  logWindow.scrollTop = logWindow.scrollHeight;
 };
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-// Example usage
-async function tronRide() {
-  console.log("💥 Zooming in...");
-  await sleep(1000);  // Pauses for 1 second
-  console.log("🌀 Whoosh... Entering the grid");
-}
-
-function typeText0(speed = 50, el, txt) {
-  if (txt.length > 0) {
-    el.textContent += txt[0];
-    setTimeout(() => typeText0(speed, el, txt.slice(1)), speed);
-  };
-}
-
-function typeText1(speed = 80, el, txt) {
-  return new Promise(resolve => {
-    function typeChar(i) {
-      if (i < txt.length) {
-        el.textContent += txt[i];
-        setTimeout(() => typeChar(i + 1), speed);
-      } else {
-        resolve(); // Done typing
-      }
-    }
-    typeChar(0);
-  });
 }
 
 async function typeText(baseSpeed, el, txt) {
@@ -297,9 +245,7 @@ async function typeText(baseSpeed, el, txt) {
 }
 
 // a fancy animated log function
-// function mylog(message)
-async function mylog(message)
-{
+async function mylog(message) {
   const logWindow = document.getElementById("log");
   //remove old blinking cursor
   const cursorOld = document.getElementById("cursor");
@@ -324,17 +270,8 @@ async function mylog(message)
   cursorNew.id = "cursor";
   logWindow.appendChild(cursorNew);
 
-  // Trim to last 100 logs
-  const maxLogs = 100;
-  while (logWindow.children.length > maxLogs) {
-    logWindow.removeChild(logWindow.firstChild); // remove oldest
-  }
   logWindow.scrollTop = logWindow.scrollHeight;
 };
-
-// they will appear at the same time...
-// mylog("testing testing here");
-// mylog("another line to test");
 
 // solution:
 let logQueue = [];
@@ -374,8 +311,8 @@ async function initDrawGrid() {
 }
 
 async function init() {
-  await sleep(1500);  //miliseconds
-  const now = new Date().toLocaleTimeString();
+  await sleep(2000);  //miliseconds
+  const now = new Date().toLocaleString();
   await queueLog("[ " + now + " ]");
   await queueLog(banner);
   await queueLog("A TRON-style maze animation using DFS.");
@@ -383,20 +320,23 @@ async function init() {
   await queueLog("Initializing GRID...");
   await initDrawGrid();
   await sleep(1000);  //miliseconds
-  queueLog("Initialization done.");
-  queueLog("Grid size: " + rows + " x " + cols);
-  queueLog("Init cell x = " + current.x + "; y = " + current.y);
+  await queueLog("Initialization done.");
+  await queueLog("Grid size: " + rows + " x " + cols);
+  await queueLog("Init cell x = " + current.x + " y = " + current.y);
 }
 
-init();
+async function main() {
+  await init();
+  await queueLog("Start maze carving...");
+  loop();
+}
 
-function mainloop() {
+function loop() {
+  // clean up first...
   ctx.fillStyle = "black";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  for (let i = 0; i < grid.length; i++) {
-    grid[i].show(ctx);
-  }
+  for (let i = 0; i < grid.length; i++) { grid[i].show(ctx); }
 
   if (!solving) {
     current.visited = true;
@@ -407,31 +347,40 @@ function mainloop() {
       next.visited = true;
       stack.push(current);
       removeWalls(current, next);
+      const m0 =  "|".repeat(stack.length);
+      const m1 = " (" + current.x + "," + current.y + ") ";
+      const m2 = "=> (" + next.x + "," + next.y + ")";
+      simlog(m0 + m1 + m2);
       current = next;
-    } else if (stack.length > 0) {
+    }
+    else if (stack.length > 0) {
       current = stack.pop();
-    } else {
+      const msg = "|".repeat(stack.length) + " [DEAD END]";
+      simlog(msg);
+    }
+    else {
+      simlog("\n--------------------------------------------")
+      simlog("--------- Maze Generation Finished ---------")
+      simlog("--------------------------------------------")
       solving = true;
       solvedPath = [...solveMaze(grid[0], grid[grid.length - 1])];
+      simlog("\nSolved path length: " + solvedPath.length + " ...");
+      const pathString = solvedPath
+        .map(cell => `(${cell.x},${cell.y})`)
+        .join(" => ");
+      simlog(pathString);
     }
-  } else {
+  }
+  else {
+    // solvedPath finished above, here endless loop
     animateLightcycle();
   }
 
-  // requestAnimationFrame(mainloop);
-  setTimeout(mainloop, 100);
+  // requestAnimationFrame(loop);
+  setTimeout(loop, 60);
 }
 
-// mainloop();
-
-
-
-
-
-
-
-
-
+main();
 
 // Optional: reload on resize (to rebuild layout)
 // window.addEventListener('resize', () => location.reload());
