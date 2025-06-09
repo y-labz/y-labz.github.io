@@ -377,7 +377,8 @@ function loop() {
   }
 
   // requestAnimationFrame(loop);
-  setTimeout(loop, 60);
+  // setTimeout(loop, 60);
+  setTimeout(loop, 100);
 }
 
 main();
