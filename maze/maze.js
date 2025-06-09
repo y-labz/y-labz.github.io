@@ -10,12 +10,12 @@ const maxL = Math.max(window.innerWidth, window.innerHeight);
 //body margin 8, div margin 8, border-box excluded border2
 const conL = minL - 32; //container length
 const logL = maxL - 32 - conL - 16; //log div length
-const delay0 = 50;
+const delay0 = 50; //for fancy log
 // config maze
-const cellSize = 64;
+const rows = 10;
+const cols = 10;
 const wallThick = 4;
-const cols = Math.floor((conL - 4) / cellSize);
-const rows = cols;
+const cellSize = Math.floor(conL / rows);
 const canL = cellSize * rows; //canvas length
 
 //-----------------------------------------------------
@@ -96,21 +96,21 @@ class Cell {
     this.visited = false;
   }
 
-  show(ctx, glowStrength) {
+  show(ctx) {
     const x = this.x * cellSize;
     const y = this.y * cellSize;
 
     ctx.strokeStyle = "#00faff";
     ctx.shadowColor = "#00ffff";
-    ctx.shadowBlur = glowStrength;
-    ctx.lineWidth = 4;
+    ctx.shadowBlur = 10;
+    ctx.lineWidth = wallThick;
 
     if (this.walls[0]) drawLine(x, y, x+cellSize, y);
     if (this.walls[1]) drawLine(x+cellSize, y, x+cellSize, y+cellSize);
     if (this.walls[2]) drawLine(x+cellSize, y+cellSize, x, y+cellSize);
     if (this.walls[3]) drawLine(x, y+cellSize, x, y);
 
-    ctx.shadowBlur = 0; //reset for everything after
+    // ctx.shadowBlur = 0; //reset for everything after
   }
 
   highlight(ctx, color = "#00ffcc33") {
@@ -199,12 +199,12 @@ function animateLightcycle() {
   }
 
   if (solutionIndex < solvedPath.length) {
-    const cell = solvedPath[solutionIndex];
-    const x = cell.x * cellSize + cellSize / 2;
-    const y = cell.y * cellSize + cellSize / 2;
-    ctx.fillStyle = "#ff00ff";
+    // const cell = solvedPath[solutionIndex];
+    // const x = cell.x * cellSize + cellSize / 2;
+    // const y = cell.y * cellSize + cellSize / 2;
+    ctx.fillStyle = "#00ffff";
     ctx.beginPath();
-    ctx.arc(x, y, 6, 0, Math.PI * 2);
+    // ctx.arc(x, y, 6, 0, Math.PI * 2);
     ctx.fill();
     solutionIndex += 1;
   }
