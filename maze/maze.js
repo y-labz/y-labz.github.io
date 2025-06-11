@@ -74,6 +74,7 @@ const path = [];
 
 let current;
 let solving = false;
+let doneAni = false;
 let solvedPath = [];
 let solutionIndex = 0;
 
@@ -203,6 +204,10 @@ function animateLightcycle() {
     solvedPath[solutionIndex].highlight(ctx, "#00ffff"); 
     solutionIndex += 1;
   }
+  else {
+    simlog("\nDone Animation. 🚀");
+    doneAni = true;
+  }
 }
 
 //-----------------------------------------------------
@@ -213,6 +218,7 @@ function simlog(message) {
   const logLine = document.createElement('div');
   logLine.textContent = message;
   logLine.style.whiteSpace = "pre-wrap";
+  // logLine.style.whiteSpace = "nowrap";
   logWindow.insertBefore(logLine, cursor);
   logWindow.scrollTop = logWindow.scrollHeight;
 };
@@ -332,6 +338,7 @@ async function main() {
 }
 
 function loop() {
+  if (doneAni) return;
   // clean up first...
   ctx.fillStyle = "black";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -359,9 +366,9 @@ function loop() {
       simlog(msg);
     }
     else {
-      simlog("\n--------------------------------------------")
-      simlog("--------- Maze Generation Finished ---------")
-      simlog("--------------------------------------------")
+      simlog("\n--------------------------------")
+      simlog("--- Maze Generation Finished ---")
+      simlog("--------------------------------")
       solving = true;
       solvedPath = [...solveMaze(grid[0], grid[grid.length - 1])];
       simlog("\nSolved path length: " + solvedPath.length + " ...");
