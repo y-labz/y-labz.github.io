@@ -14,10 +14,10 @@ const quote = "Young man, in mathematics you don't understand things. You just g
 const delacy = 40; //for fancy log
 const minL = Math.min(window.innerWidth, window.innerHeight);
 const maxL = Math.max(window.innerWidth, window.innerHeight);
-//body margin 8, div margin 8, border-box excluded border 4
-const conL = minL - 32; //container length
-const logL = maxL - 32 - conL - 16; //log div length
-const canL = conL - 8; //canvas length
+//body margin 4, div margin 4, border-box excluded border 2
+const conL = minL - 16; //container length
+const logL = maxL - 16 - conL - 8; //log div length
+const canL = conL - 4; //canvas length
 const zmin = { re:-1, im:-1 };
 const zmax = { re: 1, im: 1 };
 const rangeRe = zmax.re - zmin.re;
