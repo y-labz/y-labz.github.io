@@ -336,8 +336,8 @@ const z0 = { re:0, im:0 };
 const c = {re:0.3, im:0.3};
 // drawIter(z0, c, 20);
 // drawAnker(z0, c);
-demo1(z0, true);
-// demo1(z0, false);
+// demo1(z0, true);
+demo1(z0, false);
 // demo2(c, true);
 // demo2(c, false);
 
