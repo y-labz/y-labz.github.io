@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-78TW3CD373"></script>
+    <script src="../js/gtag.js"></script>
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Complex Iteration: f(z) = z² + C</title>
+    <meta name="description" content="Interactive visualizer of complex iteration">
+    <meta name="theme-color" content="#22b455">
+    <link rel="icon" href="../icon/rocket.svg" type="image/svg+xml" />
+    <link rel="preload" href="../fonts/TerminusTTF-4.49.3.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+    <!-- <link rel="stylesheet" href="style.css"> -->
+
+    <!-- Open Graph for social media preview -->
+    <meta property="og:title" content="Complex Iteration: f(z) = z² + C" />
+    <meta property="og:description" content="An interactive visualizer of complex iteration — trace the orbit, feel the math." />
+    <meta property="og:url" content="https://y-labz.github.io/numbers/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://y-labz.github.io/numbers/preview.jpg" />
+
+    <style>
+    body {
+      margin: 8px;
+      background: #020204;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      /* min-height: 100vh; */
+    }
+
+    #container, #log {
+      border: 4px solid #80ce87;
+      margin: 8px;
+      box-sizing: border-box;
+      box-shadow: 0 0 10px #92e5a1;
+    }
+
+    #container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    canvas {
+      width: 100%;
+      height: auto;
+      max-width: 100%;
+      image-rendering: pixelated;
+      background: #020204;
+      display: block;
+    }
+
+    #log {
+      color: #22b455;
+      padding: 1rem;
+      overflow-x: auto;
+      overflow-y: auto;
+      font-size: 16px;
+      font-family: "font0", "Courier New", Courier, monospace;
+      line-height: 1.2;
+      scrollbar-width: thin;
+      white-space: pre-wrap;
+      display: inline;
+    }
+
+    #banner {
+      font-size: 0.5rem;
+      line-height: 1;
+    }
+
+    @font-face {
+      font-family: 'font0';
+      src: url('../fonts/TerminusTTF-4.49.3.woff2') format('woff2');
+      font-weight: normal; /* Regular (400), Bold (700) */
+      font-style: normal;
+      font-display: swap; /* This shows fallback text immediately */
+    }
+
+    #cursor, #cursor1 {
+      display: inline-block;
+      width: 10px;
+      height: 1em;
+      background: #80ce87;
+      vertical-align: bottom;
+    }
+
+    #cursor {
+      animation: blink 0.7s steps(2, start) infinite;
+    }
+
+    @keyframes blink {
+      to { background: transparent; }
+    }
+
+    </style>
+  </head>
+
+  <body>
+    <script src="game.js"></script>
+  </body>
+</html>
+

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Complex Iteration: f(z) = z² + C</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: black;
+      color: #00ff88;
+      font-family: monospace;
+      overflow: hidden;
+    }
+    canvas {
+      display: block;
+      touch-action: none;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+<script>
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+let width = canvas.width = window.innerWidth;
+let height = canvas.height = window.innerHeight;
+let scale = 1000; // 1 unit = 100px
+
+const center = { x: width / 2, y: height / 2 };
+
+let z0 = { x: 0.2, y: -0.3 };
+let C = { x: -0.6, y: 0.3 };
+
+let dragging = null;
+
+function toCanvas(p) {
+  return {
+    x: center.x + p.x * scale,
+    y: center.y - p.y * scale
+  };
+}
+
+function toComplex(p) {
+  return {
+    x: (p.x - center.x) / scale,
+    y: (center.y - p.y) / scale
+  };
+}
+
+function drawCircle(pos, color = "#00ff88") {
+  const c = toCanvas(pos);
+  ctx.beginPath();
+  ctx.arc(c.x, c.y, 8, 0, Math.PI * 2);
+  ctx.fillStyle = color;
+  ctx.fill();
+}
+
+function drawLine(p1, p2, color = "#00ff88") {
+  const a = toCanvas(p1);
+  const b = toCanvas(p2);
+  ctx.beginPath();
+  ctx.moveTo(a.x, a.y);
+  ctx.lineTo(b.x, b.y);
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 2;
+  ctx.stroke();
+}
+
+function complexSquare(z) {
+  return {
+    x: z.x * z.x - z.y * z.y,
+    y: 2 * z.x * z.y
+  };
+}
+
+function complexAdd(a, b) {
+  return {
+    x: a.x + b.x,
+    y: a.y + b.y
+  };
+}
+
+function draw() {
+  ctx.clearRect(0, 0, width, height);
+
+  // Axes
+  ctx.strokeStyle = "#003300";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(0, center.y);
+  ctx.lineTo(width, center.y);
+  ctx.moveTo(center.x, 0);
+  ctx.lineTo(center.x, height);
+  ctx.stroke();
+
+  // Iteration
+  let z = {...z0};
+  drawCircle(z, "#00ff88");
+  for (let i = 0; i < 20; i++) {
+    let nextZ = complexAdd(complexSquare(z), C);
+    drawLine(z, nextZ, `hsl(${120 + i * 10}, 100%, 60%)`);
+    drawCircle(nextZ, `hsl(${120 + i * 10}, 100%, 60%)`);
+    z = nextZ;
+  }
+
+  // Control points
+  drawCircle(z0, "#00ffff");
+  drawCircle(C, "#ff00ff");
+
+  requestAnimationFrame(draw);
+}
+
+function handlePointer(evt, isDown) {
+  const rect = canvas.getBoundingClientRect();
+  const x = evt.clientX || evt.touches?.[0]?.clientX;
+  const y = evt.clientY || evt.touches?.[0]?.clientY;
+  const p = { x, y };
+
+  const pointerComplex = toComplex(p);
+
+  const distance = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+
+  if (isDown) {
+    if (distance(pointerComplex, z0) < 0.2) {
+      dragging = 'z0';
+    } else if (distance(pointerComplex, C) < 0.2) {
+      dragging = 'C';
+    }
+  } else {
+    dragging = null;
+  }
+
+  if (dragging) {
+    if (evt.type === "mousemove" || evt.type === "touchmove") {
+      if (dragging === "z0") z0 = pointerComplex;
+      if (dragging === "C") C = pointerComplex;
+    }
+  }
+}
+
+canvas.addEventListener("mousedown", (e) => handlePointer(e, true));
+canvas.addEventListener("mousemove", (e) => handlePointer(e, false));
+canvas.addEventListener("mouseup", () => dragging = null);
+
+canvas.addEventListener("touchstart", (e) => handlePointer(e, true));
+canvas.addEventListener("touchmove", (e) => {
+  e.preventDefault();
+  handlePointer(e, false);
+}, { passive: false });
+canvas.addEventListener("touchend", () => dragging = null);
+
+window.addEventListener("resize", () => {
+  width = canvas.width = window.innerWidth;
+  height = canvas.height = window.innerHeight;
+  center.x = width / 2;
+  center.y = height / 2;
+});
+
+
+function generateMandelbrotDotSet(xMin, xMax, yMin, yMax, resolution, maxIter) {
+  const dots = [];
+  const dx = (xMax - xMin) / resolution;
+  const dy = (yMax - yMin) / resolution;
+
+  for (let i = 0; i < resolution; i++) {
+    for (let j = 0; j < resolution; j++) {
+      let x0 = xMin + i * dx;
+      let y0 = yMin + j * dy;
+      let x = 0, y = 0;
+      let iter = 0;
+
+      while (x * x + y * y <= 4 && iter < maxIter) {
+        const xTemp = x * x - y * y + x0;
+        y = 2 * x * y + y0;
+        x = xTemp;
+        iter++;
+      }
+
+      if (iter === maxIter) {
+        dots.push({ re: x0, im: y0 });
+      }
+    }
+  }
+
+  return dots;
+}
+
+const mandelbrotDots = generateMandelbrotDotSet(-2.5, 1, -1.5, 1.5, 100, 50);
+
+function drawDots(ctx, dots, width, height) {
+  ctx.fillStyle = "#00ff44"; // Matrix green
+  dots.forEach(dot => {
+    const x = width * (dot.re + 2.5) / 3.5;  // map [-2.5,1] to [0,width]
+    const y = height * (1.5 - dot.im) / 3.0; // map [-1.5,1.5] to [0,height]
+    ctx.fillRect(x, y, 1.5, 1.5); // you can use radius instead
+  });
+}
+
+drawDots(ctx, mandelbrotDots, width, height);
+
+//draw();
+
+</script>
+</body>
+</html>
