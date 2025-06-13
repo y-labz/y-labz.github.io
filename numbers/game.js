@@ -1,5 +1,4 @@
-// colorswall.com/palette/868  matrix colors palette
-//
+// 2025.06, y-labz
 //-----------------------------------------------------
 const banner = `
 ░▒▓█▓▒░░▒▓█▓▒░▒▓█▓▒░       ░▒▓██████▓▒░░▒▓███████▓▒░░▒▓████████▓▒░ 
@@ -287,7 +286,7 @@ function drawIter(z0, c, n) {
     // drawLine(z, z1, "#80ce87", 1);
     // drawCircle(z1, "#92e5a1", 3); //z0 draw extra
     if (lineFlag) {
-      drawLine(z, z1, `hsl(141, 68%, ${40+i*2}%)`, 1);
+      drawLine(z, z1, `hsl(141, 68%, ${l0 + i * li}%)`, 1);
     }
     drawCircle(z1, `hsl(141, 68%, ${l0 + i * li}%)`, 3);
     z = z1;
@@ -316,7 +315,6 @@ async function demo1(trail) {
   const df = (Math.PI * 2) / n;
   let f = Math.PI * 0.75; //ini
   let end = n * 1; //config
-  // if (trail) end = n;
 
   for (i = 0; i <= end; i++) {
     if (!trail) refreshCanvas();
@@ -337,7 +335,6 @@ async function demo2(trail) {
   const df = (Math.PI * 2) / n;
   let f = 0; //ini
   let end = n * 1;
-  // if (trail) end = n;
 
   for (i = 0; i < end; i++) {
     if (!trail) refreshCanvas();
@@ -397,15 +394,15 @@ async function main() {
   await queueLog("\n[ " + now + " ]");
   await queueLog(quote);
   await queueLog("An interactive visualizer of complex iteration: f(z)=z²+c");
-  await queueLog("Implemented by y-labz, 2025-06 🚀");
-  await queueLog("Initial z0: 0.20+0.50i  c: 0.40+0.30i");
+  await queueLog("Implemented in y-labz, 2025-06 🚀");
+  await queueLog("\nInitial z0: 0.20+0.50i  c: 0.40+0.30i");
   await queueLog("Number of iterations: 50");
+  await queueLog("(Use desktop instead of mobile to reveal its full beauty)");
   await queueLog("Complex plane from -1-1i to +1+1i");
-  await queueLog("Use slider to toggle line");
-  await queueLog("Drag white circle to adjust z0 value");
-  await queueLog("Drag red circle to adjust c value");
-  // await queueLog("Init cell x = " + current.x + " y = " + current.y);
-  //
+  await queueLog("\nYes, this page is interactive:");
+  await queueLog("* use slider to toggle line");
+  await queueLog("* drag white circle (now in galactic center) to adjust z0 value");
+  await queueLog("* drag red circle to adjust c value");
 }
 
 main();
