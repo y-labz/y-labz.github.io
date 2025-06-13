@@ -254,7 +254,7 @@ function generateMandelbrotDotSet(resolution, maxIter) {
   return dots;
 }
 
-const mandelbrotDots = generateMandelbrotDotSet(150, 50);
+const mandelbrotDots = generateMandelbrotDotSet(120, 50);
 // simlog("set length: " + mandelbrotDots.length);
 
 function drawDots(dots, size) {
@@ -343,8 +343,8 @@ async function demo2(c, trail) {
   }
 }
 
-let zDrag = { re:0, im:0 };
-let cDrag = {re:0.3, im:0.3};
+let zDrag = { re: 0.20, im: 0.50 };
+let cDrag = { re: 0.40, im: 0.30 };
 let dragging = null;
 // drawDots(mandelbrotDots, 2);
 // drawAxes("#204829");
@@ -403,8 +403,8 @@ function handlePointer(evt, isDown) {
       dragging = 'z0';
       simlog("Activate dragging = z0 ...");
     } else if (distance(pointerComplex, cDrag) < close) {
-      dragging = 'C';
-      simlog("Activate dragging = C ...");
+      dragging = 'c';
+      simlog("Activate dragging = c ...");
     }
   }
 
@@ -414,7 +414,7 @@ function handlePointer(evt, isDown) {
            " c = "+cDrag.re.toFixed(2)+" + "+cDrag.im.toFixed(2)+"*i");
   }
 
-  if (dragging === "C") {
+  if (dragging === "c") {
     cDrag = pointerComplex;
     simlog("z0 = "+zDrag.re.toFixed(2)+" + "+zDrag.im.toFixed(2)+"*i"+ 
            " c = "+cDrag.re.toFixed(2)+" + "+cDrag.im.toFixed(2)+"*i");
