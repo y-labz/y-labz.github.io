@@ -74,6 +74,10 @@ function setupWindow() {
 setupWindow();
 const canvas = document.getElementById('game');
 const ctx = canvas.getContext('2d');
+// switch added in html, set default values after page load:
+const slider = document.getElementById('fancySwitch');
+let lineFlag = false;
+slider.checked = false;
 
 //-----------------------------------------------------
 function simlog(message) {
@@ -282,7 +286,9 @@ function drawIter(z0, c, n) {
     const z1 = zAdd(zSquare(z), c);
     // drawLine(z, z1, "#80ce87", 1);
     // drawCircle(z1, "#92e5a1", 3); //z0 draw extra
-    // drawLine(z, z1, `hsl(141, 68%, ${40+i*2}%)`, 1);
+    if (lineFlag) {
+      drawLine(z, z1, `hsl(141, 68%, ${40+i*2}%)`, 1);
+    }
     drawCircle(z1, `hsl(141, 68%, ${l0 + i * li}%)`, 3);
     z = z1;
   }
@@ -410,14 +416,14 @@ function handlePointer(evt, isDown) {
 
   if (dragging === "z0") {
     zDrag = pointerComplex;
-    simlog("z0 = "+zDrag.re.toFixed(2)+" + "+zDrag.im.toFixed(2)+"*i"+ 
-           " c = "+cDrag.re.toFixed(2)+" + "+cDrag.im.toFixed(2)+"*i");
+    simlog("z0: "+zDrag.re.toFixed(2)+"+"+zDrag.im.toFixed(2)+"i "+ 
+           " c: "+cDrag.re.toFixed(2)+"+"+cDrag.im.toFixed(2)+"i");
   }
 
   if (dragging === "c") {
     cDrag = pointerComplex;
-    simlog("z0 = "+zDrag.re.toFixed(2)+" + "+zDrag.im.toFixed(2)+"*i"+ 
-           " c = "+cDrag.re.toFixed(2)+" + "+cDrag.im.toFixed(2)+"*i");
+    simlog("z0: "+zDrag.re.toFixed(2)+"+"+zDrag.im.toFixed(2)+"i "+ 
+           " c: "+cDrag.re.toFixed(2)+"+"+cDrag.im.toFixed(2)+"i");
   }
 }
 
@@ -448,5 +454,10 @@ canvas.addEventListener("touchmove", (e) => {
 canvas.addEventListener("touchend", () => {
   simlog("Event: touchend");
   dragging = null;
+});
+
+slider.addEventListener("change", function() {
+  lineFlag = this.checked;
+  simlog("drawLine is now " + (lineFlag ? "ON✨" : "OFF"));
 });
 

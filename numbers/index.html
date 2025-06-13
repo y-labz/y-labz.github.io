@@ -98,11 +98,65 @@
       /* to { background: #204829; } */
     }
 
+    .fancy-switch-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 9999;
+    }
+
+    /* Hide default checkbox */
+    .fancy-switch {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    /* The slider itself */
+    .fancy-slider {
+      position: relative;
+      display: block;
+      width: 52px;
+      height: 28px;
+      background-color: #ccc;
+      border-radius: 34px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .fancy-slider::before {
+      content: "";
+      position: absolute;
+      height: 22px;
+      width: 22px;
+      left: 3px;
+      top: 3px;
+      background-color: white;
+      border-radius: 50%;
+      transition: transform 0.3s ease;
+    }
+
+    /* When checked */
+    .fancy-switch:checked + .fancy-slider {
+      background-color: #22b455;
+    }
+
+    .fancy-switch:checked + .fancy-slider::before {
+      transform: translateX(24px);
+    }
+
     </style>
   </head>
 
   <body>
+
+    <div class="fancy-switch-container">
+      <input type="checkbox" id="fancySwitch" class="fancy-switch">
+      <label for="fancySwitch" class="fancy-slider"></label>
+    </div>
+
     <script src="game.js"></script>
+
   </body>
 </html>
 
