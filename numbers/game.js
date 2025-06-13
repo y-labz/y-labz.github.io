@@ -308,41 +308,43 @@ function refreshCanvas() {
   drawAxes("#204829");
 }
 
-async function demo1(z0, trail) {
-  // const z0 = { re: 0, im: 0 };
+async function demo1(trail) {
+  const z0 = { re: 0, im: 0 };
   const origin = { re: -0.2, im: 0};
   const r = 0.5;
   const n = 300;
   const df = (Math.PI * 2) / n;
-  let f = Math.PI * 0.75;
-  let end = n * 2;
-  if (trail) end = n;
+  let f = Math.PI * 0.75; //ini
+  let end = n * 1; //config
+  // if (trail) end = n;
 
   for (i = 0; i <= end; i++) {
     if (!trail) refreshCanvas();
     const c = { re: origin.re + r * Math.cos(f),
                 im: origin.im + r * Math.sin(f) }
-    drawIter(z0, c, 30);
+    drawIter(z0, c, 50);
     drawAnker(z0, c);
     f -= df;
     await sleep(10);
   }
 }
 
-async function demo2(c, trail) {
-  const origin = { re: 0, im: 0};
-  const r = 0.5;
+async function demo2(trail) {
+  const c = { re: 0.40, im: 0.30 };
+  const origin = { re: 0, im: 0.50};
+  const r = 0.2;
   const n = 300;
   const df = (Math.PI * 2) / n;
-  let f = Math.PI * 0.75;
-  let end = n * 2;
-  if (trail) end = n;
+  let f = 0; //ini
+  let end = n * 1;
+  // if (trail) end = n;
 
-  for (i = 0; i <= end; i++) {
+  for (i = 0; i < end; i++) {
     if (!trail) refreshCanvas();
     const z = { re: origin.re + r * Math.cos(f),
                 im: origin.im + r * Math.sin(f) }
-    drawIter(z, c, 30);
+    // simlog(z.re.toFixed(4) + "+" + z.im.toFixed(4) + "i");
+    drawIter(z, c, 50);
     drawAnker(z, c);
     f -= df;
     await sleep(10);
@@ -357,10 +359,10 @@ let dragging = null;
 // const c = {re:-0.6, im:0.3};
 // drawIter(z0, c, 20);
 // drawAnker(z0, c);
-// demo1(z0, true);
-// demo1(z0, false);
-// demo2(c, true);
-// demo2(c, false);
+// demo1(true);
+// demo1(false);
+// demo2(true);
+// demo2(false);
 
 function draw() {
   refreshCanvas();
@@ -369,30 +371,44 @@ function draw() {
   requestAnimationFrame(draw);
 }
 
-draw();
+async function intoAnima() {
+  lineFlag = true;
+  slider.checked = true;
+  await demo1(false);
+  refreshCanvas();
 
-async function init() {
-  // await sleep(2000);  //miliseconds
-  const now = new Date().toLocaleString();
-  await queueLog("\n[ " + now + " ]");
-  await queueLog(quote);
-  // await queueLog("A TRON-style maze animation using DFS.");
-  // await queueLog("Implemented by y-labz, 2025-06 🚀");
-  // await queueLog("Initializing GRID...");
-  // await initDrawGrid();
-  // await sleep(1000);  //miliseconds
-  // await queueLog("Initialization done.");
-  // await queueLog("Grid size: " + rows + " x " + cols);
-  // await queueLog("Init cell x = " + current.x + " y = " + current.y);
+  lineFlag = false;
+  slider.checked = false;
+  await demo1(true);
+  refreshCanvas();
+
+  await demo2(true);
+  refreshCanvas();
+
+  await demo2(false);
+  refreshCanvas();
+
+  draw();
 }
 
 async function main() {
-  await init();
-  // await queueLog("Start maze carving...");
-  // loop();
+  intoAnima();
+  const now = new Date().toLocaleString();
+  await queueLog("\n[ " + now + " ]");
+  await queueLog(quote);
+  await queueLog("An interactive visualizer of complex iteration: f(z)=z²+c");
+  await queueLog("Implemented by y-labz, 2025-06 🚀");
+  await queueLog("Initial z0: 0.20+0.50i  c: 0.40+0.30i");
+  await queueLog("Number of iterations: 50");
+  await queueLog("Complex plane from -1-1i to +1+1i");
+  await queueLog("Use slider to toggle line");
+  await queueLog("Drag white circle to adjust z0 value");
+  await queueLog("Drag red circle to adjust c value");
+  // await queueLog("Init cell x = " + current.x + " y = " + current.y);
+  //
 }
 
-// main();
+main();
 
 //-----------------------------------------------------
 function handlePointer(evt, isDown) {
