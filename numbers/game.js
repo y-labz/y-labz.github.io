@@ -86,6 +86,10 @@ function simlog(message) {
   // logLine.style.whiteSpace = "nowrap";
   logWindow.insertBefore(logLine, cursor);
   logWindow.scrollTop = logWindow.scrollHeight;
+  // 💅 Trim to last 100 logs
+  while (logWindow.children.length > 200) {
+    logWindow.removeChild(logWindow.firstChild); // remove oldest
+  }
 };
 
 function sleep(ms) {
@@ -221,6 +225,10 @@ function zAdd(z1, z2) {
   return { re: z1.re + z2.re, im: z1.im + z2.im };
 }
 
+function distance(z1, z2) {
+  return Math.hypot(z1.re - z2.re, z1.im - z2.im);
+}
+
 function generateMandelbrotDotSet(resolution, maxIter) {
   const dots = [];
   const dx = rangeRe / resolution;
@@ -231,13 +239,14 @@ function generateMandelbrotDotSet(resolution, maxIter) {
       let cy = zmin.im + j * dy;
       let x = 0, y = 0;
       let iter = 0;
-      while (x * x + y * y <= 4 && iter < maxIter) {
+      while (x * x + y * y < 4 && iter < maxIter) {
         const xTemp = x * x - y * y + cx;
         y = 2 * x * y + cy;
         x = xTemp;
         iter++;
       }
-      if (iter === maxIter) {
+      // if (iter === maxIter) {
+      if (iter < maxIter) {
         dots.push({ re: cx, im: cy });
       }
     }
@@ -246,6 +255,7 @@ function generateMandelbrotDotSet(resolution, maxIter) {
 }
 
 const mandelbrotDots = generateMandelbrotDotSet(150, 50);
+// simlog("set length: " + mandelbrotDots.length);
 
 function drawDots(dots, size) {
   ctx.fillStyle = "#204829";
@@ -265,11 +275,15 @@ function drawAxes(color) {
 }
 
 function drawIter(z0, c, n) {
+  const l0 = 40;
+  const li = (100 - l0) / n;
   let z = z0;
   for (let i = 0; i < n; i++) {
     const z1 = zAdd(zSquare(z), c);
-    drawLine(z, z1, "#80ce87", 1);
-    drawCircle(z1, "#92e5a1", 3); //z0 draw extra
+    // drawLine(z, z1, "#80ce87", 1);
+    // drawCircle(z1, "#92e5a1", 3); //z0 draw extra
+    // drawLine(z, z1, `hsl(141, 68%, ${40+i*2}%)`, 1);
+    drawCircle(z1, `hsl(141, 68%, ${l0 + i * li}%)`, 3);
     z = z1;
   }
 }
@@ -329,17 +343,27 @@ async function demo2(c, trail) {
   }
 }
 
-drawDots(mandelbrotDots, 2);
-drawAxes("#204829");
-const z0 = { re:0, im:0 };
+let zDrag = { re:0, im:0 };
+let cDrag = {re:0.3, im:0.3};
+let dragging = null;
+// drawDots(mandelbrotDots, 2);
+// drawAxes("#204829");
 // const c = {re:-0.6, im:0.3};
-const c = {re:0.3, im:0.3};
 // drawIter(z0, c, 20);
 // drawAnker(z0, c);
 // demo1(z0, true);
-demo1(z0, false);
+// demo1(z0, false);
 // demo2(c, true);
 // demo2(c, false);
+
+function draw() {
+  refreshCanvas();
+  drawIter(zDrag, cDrag, 50);
+  drawAnker(zDrag, cDrag);
+  requestAnimationFrame(draw);
+}
+
+draw();
 
 async function init() {
   // await sleep(2000);  //miliseconds
@@ -362,23 +386,67 @@ async function main() {
   // loop();
 }
 
-function loop() {
+// main();
 
-  // requestAnimationFrame(loop);
-  // setTimeout(loop, 60);
-  setTimeout(loop, 100);
+//-----------------------------------------------------
+function handlePointer(evt, isDown) {
+  const rect = canvas.getBoundingClientRect();
+  const x = evt.clientX || evt.touches?.[0]?.clientX;
+  const y = evt.clientY || evt.touches?.[0]?.clientY;
+  const pointerComplex = toComplex(x, y);
+  const close = 0.1;
+
+  simlog("dragging = " + dragging);
+
+  if (isDown && !dragging) {
+    if (distance(pointerComplex, zDrag) < close) {
+      dragging = 'z0';
+      simlog("Activate dragging = z0 ...");
+    } else if (distance(pointerComplex, cDrag) < close) {
+      dragging = 'C';
+      simlog("Activate dragging = C ...");
+    }
+  }
+
+  if (dragging === "z0") {
+    zDrag = pointerComplex;
+    simlog("z0 = "+zDrag.re.toFixed(2)+" + "+zDrag.im.toFixed(2)+"*i"+ 
+           " c = "+cDrag.re.toFixed(2)+" + "+cDrag.im.toFixed(2)+"*i");
+  }
+
+  if (dragging === "C") {
+    cDrag = pointerComplex;
+    simlog("z0 = "+zDrag.re.toFixed(2)+" + "+zDrag.im.toFixed(2)+"*i"+ 
+           " c = "+cDrag.re.toFixed(2)+" + "+cDrag.im.toFixed(2)+"*i");
+  }
 }
 
-main();
+canvas.addEventListener("mousedown", (e) => {
+  simlog("Event: mousedown");
+  handlePointer(e, true);
+});
 
-// Optional: reload on resize (to rebuild layout)
-// window.addEventListener('resize', () => location.reload());
+canvas.addEventListener("mousemove", (e) => {
+  if (dragging) { handlePointer(e, true); }
+});
 
-// function drawDots(ctx, dots, width, height) {
-//   ctx.fillStyle = "#204829"; // Matrix green
-//   dots.forEach(dot => {
-//     const x = width * (dot.re + 1) / 2.;  // map [-2.5,1] to [0,width]
-//     const y = height * (1 - dot.im) / 2.; // map [-1.5,1.5] to [0,height]
-//     ctx.fillRect(x, y, 1.5, 1.5);
-//   });
-// }
+canvas.addEventListener("mouseup", () => {
+  simlog("Event: mouseup");
+  dragging = null;
+});
+
+canvas.addEventListener("touchstart", (e) => {
+  simlog("Event: touchstart");
+  handlePointer(e, true);
+});
+
+canvas.addEventListener("touchmove", (e) => {
+  e.preventDefault();
+  if (dragging) { handlePointer(e, true); } },
+  { passive: false });
+
+canvas.addEventListener("touchend", () => {
+  simlog("Event: touchend");
+  dragging = null;
+});
+
