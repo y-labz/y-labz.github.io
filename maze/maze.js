@@ -322,7 +322,7 @@ async function init() {
   await queueLog("[ " + now + " ]");
   await queueLog(banner);
   await queueLog("A TRON-style maze animation using DFS.");
-  await queueLog("Implemented by y-labz, 2025-06 🚀");
+  await queueLog("Implemented in y-labz, 2025-06 🚀");
   await queueLog("Initializing GRID...");
   await initDrawGrid();
   await sleep(1000);  //miliseconds
