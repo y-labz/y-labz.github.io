@@ -1,10 +1,10 @@
 const folders = [
+  "about",
   "show-me-the-money",
   "game-of-life",
   "maze",
   "numbers",
   "reader-demo",
-  "about",
 ];
 
 const banner = `
@@ -218,7 +218,7 @@ async function main() {
   spin();
 
   const pageList = await buildList().catch(err => { simlog(err); });
-  await sleep(2000);
+  await sleep(1500);
 
   if (pageList && pageList.length > 1) {
     clearInterval(spinInterval);
@@ -230,7 +230,7 @@ async function main() {
       await simloga("🚀 " + page.title, page.url);
       // await simlog( "DESCR: " + page.desc);
       await simlog( "💭 " + page.desc);
-      await sleep(1000);
+      await sleep(200);
     };
   }
 

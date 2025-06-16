@@ -1,4 +1,11 @@
-const story = "Well, it is getting late today - I might write something more later... For license and readme see here:";
+const story = `Once upon a time, I enjoyed Brilliant’s daily challenges — crisp little puzzles that tickled my neurons and made morning coffee taste smarter. Then they axed that feature and slapped on a new logo that looked like it lost a fight with Clipart. Naturally, I rage-quit my subscription. Aesthetic crimes have consequences.
+
+Left wandering the digital wilderness, I stumbled upon Project Euler and a few other mathy wonderlands where I could still get my daily dose of mental gymnastics — the kind that don’t require a PhD, a time machine, or selling my soul to understand. Just me, some clean code, and a few elegant problems that flirt with logic and dance with numbers.
+
+This page? It’s a growing collection of selected warm-up sessions. Tiny projects. Quick dives. Beautiful brain candy that lives at the intersection of math and code — not too heavy, not too long, just enough to keep the gears turning and the circuits humming.
+
+If you're the kind of person who reads README files or cares about licenses, you’ll find them here:
+`;
 
 const lic = "https://github.com/y-labz/y-labz.github.io?tab=License-1-ov-file";
 
@@ -111,7 +118,7 @@ async function main() {
 
   await simlog("\n");
   await simlog("💭 " + story);
-  await simloga("...readme...", lic);
+  await simloga("... license ...", lic);
 
 }
 
