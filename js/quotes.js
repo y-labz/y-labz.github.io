@@ -1,5 +1,4 @@
 const quotes = [
-"If imaginary numbers aren't real, then maybe negative numbers are imaginary too. – Y",
 "Don’t drink and derive.",
 "Marge, I agree with you in theory. IN THEORY communism works. In theory. — Homer Simpson",
 "If gravity sucks — go flying",
