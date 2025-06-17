@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset 
+  xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+  <url>
+    <loc>https://y-labz.github.io/</loc>
+    <priority>1.0</priority>
+  </url>
+
+  <url>
+    <loc>https://y-labz.github.io/about</loc>
+    <priority>0.6</priority>
+  </url>
+
+  <url>
+    <loc>https://y-labz.github.io/pendulum</loc>
+    <priority>0.6</priority>
+  </url>
+
+  <url>
+    <loc>https://y-labz.github.io/show-me-the-money</loc>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://y-labz.github.io/game-of-life</loc>
+    <priority>0.6</priority>
+  </url>
+
+  <url>
+    <loc>https://y-labz.github.io/maze</loc>
+    <priority>0.6</priority>
+  </url>
+
+  <url>
+    <loc>https://y-labz.github.io/numbers</loc>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://y-labz.github.io/reader-demo</loc>
+    <priority>0.8</priority>
+  </url>
+
+</urlset>
+
