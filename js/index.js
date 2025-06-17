@@ -1,5 +1,6 @@
 const folders = [
   "about",
+  "pendulum",
   "show-me-the-money",
   "game-of-life",
   "maze",

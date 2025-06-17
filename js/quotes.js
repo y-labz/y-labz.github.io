@@ -1,6 +1,7 @@
 const quotes = [
 "Don’t drink and derive.",
 "Marge, I agree with you in theory. IN THEORY communism works. In theory. — Homer Simpson",
+"Stay hungry. Stay foolish. — Steve Jobs",
 "If gravity sucks — go flying",
 "STAY FOCUSED — Get It Done",
 "Be alone, that is the secret of invention; be alone, that is when ideas are born. – Nikola Tesla",
