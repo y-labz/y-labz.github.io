@@ -95,7 +95,7 @@ function draw() {
 
     const alpha = i / trail.length; // from 0 to 1
     ctx.strokeStyle = `rgba(${trailBase[0]}, ${trailBase[1]}, ${trailBase[2]}, ${alpha})`;
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 5;
     ctx.beginPath();
     ctx.moveTo(p1.x, p1.y);
     ctx.lineTo(p2.x, p2.y);
@@ -103,7 +103,7 @@ function draw() {
   }
 
   ctx.strokeStyle = armColor;
-  ctx.lineWidth = 4;
+  ctx.lineWidth = 6;
   ctx.beginPath();
   ctx.moveTo(origin.x, origin.y);
   ctx.lineTo(x1, y1);
@@ -112,12 +112,12 @@ function draw() {
 
   ctx.fillStyle = bob1Color;
   ctx.beginPath();
-  ctx.arc(x1, y1, 8, 0, Math.PI * 2);
+  ctx.arc(x1, y1, 10, 0, Math.PI * 2);
   ctx.fill();
 
   ctx.fillStyle = bob2Color;
   ctx.beginPath();
-  ctx.arc(x2, y2, 8, 0, Math.PI * 2);
+  ctx.arc(x2, y2, 10, 0, Math.PI * 2);
   ctx.fill();
 }
 
