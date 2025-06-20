@@ -11,23 +11,26 @@ const maxL = Math.max(window.innerWidth, window.innerHeight);
 const conL = minL - 16; //container length
 const logL = maxL - 16 - conL - 8; //log div length
 const canL = conL - 4; //canvas length
-
-const r0 = canL * 0.05; //initial radius
-const rMax = canL / 2 - 10 - r0;
 const origin = {x: canL / 2, y: canL / 2};
+
+let confL = logL * 0.618; //config panel length
+
+let r0factor = 0.02;
+let r0 = canL * r0factor; //initial radius
+let rMax = canL / 2 - 20 - r0;
 
 const nSeeds = 1000;
 // const nCircle = 40;
 const goldenRatio = (1 + Math.sqrt(5)) * 0.5; //1.618
 const dPhiGold = 2 * Math.PI * (goldenRatio - 1);
-// #d_phi = (2*np.pi) * (ratio-1) #or *ratio, no diff!!!
-// #d_phi = (2*np.pi) * (np.pi-3)
-// d_phi = (2*np.pi) * (np.sqrt(2)-1)
-let ratio = 0.618; //0~1, UI
+// let ratio = 0.3300; //0~1, UI ratioSlider
+let ratio = goldenRatio - 1;
 let dPhi = 2 * Math.PI * ratio;
-let nCircle = nSeeds * dPhi / (Math.PI * 2);
+// let nCircle = nSeeds * dPhi / (Math.PI * 2);
 // let rSeeds = 1 * rMax / nCircle;
-let rSeeds = 5;
+let rSeeds = 3;
+let rSeedsFactor = 1; //0~2? UI
+let hue = 210;
 
 //-----------------------------------------------------
 function setupWindow() {
@@ -58,6 +61,7 @@ function setupWindow() {
     confDiv.style.width = conL + "px";
     confDiv.style.height = logL + "px";
     document.body.appendChild(confDiv);
+    confL = conL * 0.618; //config panel length
   }
 
   //add canvas here, max L0-border2
@@ -67,59 +71,164 @@ function setupWindow() {
   canvas.height = canL;
   container.appendChild(canvas);
 
-  // add banner here
+  // add config UI here:
+  const label0 = document.createElement('label');
+  // label0.style.display = "block";
+  // label0.style.paddingTop = "20px";
+  label0.textContent = `Ratio: ${ratio.toFixed(4)}`;
+  label0.setAttribute('for', 'ratioSlider');
+
+  const slider0 = document.createElement('input');
+  slider0.type = 'range';
+  slider0.id = 'ratioSlider';
+  slider0.min = '0';
+  slider0.max = '1';
+  slider0.step = '0.0001';
+  slider0.value = ratio;
+  slider0.style.width = confL + "px";
+
+  slider0.addEventListener('input', () => {
+    ratio = parseFloat(slider0.value);
+    label0.textContent = `Ratio: ${ratio.toFixed(4)}`;
+    dPhi = 2 * Math.PI * ratio;
+    // nCircle = nSeeds * dPhi / (Math.PI * 2);
+  });
+
+  confDiv.appendChild(label0);
+  confDiv.appendChild(slider0);
+
+  const label1 = document.createElement('label');
+  label1.textContent = `Seed size: ${rSeeds.toFixed(1)}`;
+  label1.setAttribute('for', 'rSeedSlider');
+
+  const slider1 = document.createElement('input');
+  slider1.type = 'range';
+  slider1.id = 'rSeedSlider';
+  slider1.min = '1';
+  slider1.max = '20';
+  slider1.step = '0.1';
+  slider1.value = rSeeds;
+  slider1.style.width = confL + "px";
+
+  slider1.addEventListener('input', () => {
+    rSeeds = parseFloat(slider1.value);
+    label1.textContent = `Seed size: ${rSeeds.toFixed(1)}`;
+  });
+
+  confDiv.appendChild(label1);
+  confDiv.appendChild(slider1);
+
+  const label2 = document.createElement('label');
+  label2.textContent = `Seed size scale: ${rSeedsFactor.toFixed(2)}`;
+  label2.setAttribute('for', 'rSeedFactSlider');
+
+  const slider2 = document.createElement('input');
+  slider2.type = 'range';
+  slider2.id = 'rSeedFactSlider';
+  slider2.min = '0';
+  slider2.max = '3';
+  slider2.step = '0.01';
+  slider2.value = rSeedsFactor;
+  slider2.style.width = confL + "px";
+
+  slider2.addEventListener('input', () => {
+    rSeedsFactor = parseFloat(slider2.value);
+    label2.textContent = `Seed size scale: ${rSeedsFactor.toFixed(2)}`;
+  });
+
+  confDiv.appendChild(label2);
+  confDiv.appendChild(slider2);
+
+  const label3 = document.createElement('label');
+  label3.textContent = `Radius offset: ${r0factor.toFixed(2)}`;
+  label3.setAttribute('for', 'r0FactSlider');
+
+  const slider3 = document.createElement('input');
+  slider3.type = 'range';
+  slider3.id = 'r0FactSlider';
+  slider3.min = '0';
+  slider3.max = '0.15';
+  slider3.step = '0.01';
+  slider3.value = r0factor;
+  slider3.style.width = confL + "px";
+
+  slider3.addEventListener('input', () => {
+    r0factor = parseFloat(slider3.value);
+    label3.textContent = `Radius offset: ${r0factor.toFixed(2)}`;
+    r0 = canL * r0factor; //initial radius
+    rMax = canL / 2 - 20 - r0;
+  });
+
+  confDiv.appendChild(label3);
+  confDiv.appendChild(slider3);
+
+  const label4 = document.createElement('label');
+  label4.textContent = `Color hue: ${hue.toFixed(1)}`;
+  label4.setAttribute('for', 'hueSlider');
+
+  const slider4 = document.createElement('input');
+  slider4.type = 'range';
+  slider4.id = 'hueSlider';
+  slider4.min = '0';
+  slider4.max = '360';
+  slider4.step = '1';
+  slider4.value = hue;
+  slider4.style.width = confL + "px";
+
+  slider4.addEventListener('input', () => {
+    hue = parseFloat(slider4.value);
+    label4.textContent = `Color hue: ${hue.toFixed(1)}`;
+  });
+
+  confDiv.appendChild(label4);
+  confDiv.appendChild(slider4);
+
+
+
+
+
+
+  // Preset values
+  const presets = {
+    '0.33': 0.33,
+    '0.333': 0.333,
+    '0.66': 0.66,
+    '0.666': 0.666,
+    '0.88': 0.88,
+    '0.888': 0.888,
+    '1/π': 1 / Math.PI,
+    '1/φ': 1 / ((1 + Math.sqrt(5)) / 2),
+    '1/3': 1 / 3,
+    '1/e': 1 / Math.E,
+    '1/√2': 1 / Math.sqrt(2)
+  };
+
+  // Container for buttons
+  const btnContainer = document.createElement('div');
+  btnContainer.style.marginTop = '10px';
+
+  Object.entries(presets).forEach(([label, value]) => {
+    const btn = document.createElement('button');
+    btn.textContent = label;
+    btn.addEventListener('click', () => {
+      ratio = value;
+      slider0.value = ratio;
+      label0.textContent = `Ratio: ${ratio.toFixed(4)}`;
+      console.log(`Preset selected (${label}):`, ratio);
+      dPhi = 2 * Math.PI * ratio;
+      // nCircle = nSeeds * dPhi / (Math.PI * 2);
+    });
+    btnContainer.appendChild(btn);
+  });
+
+  confDiv.appendChild(btnContainer);
+
+  // add banner in the end
   const ban = document.createElement('div');
   ban.id = "banner";
   ban.textContent = banner;
   confDiv.appendChild(ban);
 
-  // add config UI here:
-      const label = document.createElement('label');
-    label.textContent = 'Ratio: ';
-    label.setAttribute('for', 'ratioSlider');
-
-    const slider = document.createElement('input');
-    slider.type = 'range';
-    slider.id = 'ratioSlider';
-    slider.min = '0';
-    slider.max = '1';
-    slider.step = '0.001';
-    slider.value = ratio;
-
-    const valueDisplay = document.createElement('span');
-    valueDisplay.id = 'ratioValue';
-    valueDisplay.textContent = ratio;
-
-    confDiv.appendChild(label);
-    confDiv.appendChild(slider);
-    confDiv.appendChild(valueDisplay);
-
-      // Preset values
-    const presets = {
-      '1/π': 1 / Math.PI,
-      '1/φ': 1 / ((1 + Math.sqrt(5)) / 2),
-      '1/3': 1 / 3,
-      '1/2': 1 / 2,
-      '1/√2': 1 / Math.sqrt(2)
-    };
-
-    // Container for buttons
-    const btnContainer = document.createElement('div');
-    btnContainer.style.marginTop = '10px';
-
-    Object.entries(presets).forEach(([label, value]) => {
-      const btn = document.createElement('button');
-      btn.textContent = label;
-      btn.addEventListener('click', () => {
-        ratio = value;
-        slider.value = ratio;
-        valueDisplay.textContent = ratio.toFixed(4); // optional precision
-        console.log(`Preset selected (${label}):`, ratio);
-      });
-      btnContainer.appendChild(btn);
-    });
-
-    confDiv.appendChild(btnContainer);
 }
 
 setupWindow();
@@ -127,7 +236,6 @@ const canvas = document.getElementById('game');
 const ctx = canvas.getContext('2d');
 
 const ratioSlider = document.getElementById('ratioSlider');
-const valueDisplay = document.getElementById('ratioValue');
 
 
 //-----------------------------------------------------
@@ -135,10 +243,9 @@ const valueDisplay = document.getElementById('ratioValue');
 const slider = document.getElementById('fancySwitch');
 let lineFlag = false;
 slider.checked = false;
-// let lineFlag = true;
-// slider.checked = true;
-let primeFlag = true;
-let fiboFlag = true;
+
+let primeFlag = false;
+let fiboFlag = false;
 
 //-----------------------------------------------------
 function isPrime(n) {
@@ -191,13 +298,14 @@ function spiralArchi(phi) {
 
 function spiralFerma(phi) {
   // const a = 1;
-  const r0 = 10;
+  // const r0 = 10;
   // const a = Math.floor((canL*0.5-r0)/(2*Math.PI*nCircle));
-  const a = (canL*0.5 - 2*r0) / Math.sqrt(2*Math.PI * nCircle);
+  const a = rMax / Math.sqrt(nSeeds * dPhi);
   return a * Math.sqrt(phi) + r0;
 }
 
 function genDots(dphi) {
+  if (dphi === 0) return [];
   const dots = [];
   let phi = 0;
   for (let i = 0; i < nSeeds; i++) {
@@ -215,7 +323,7 @@ function genDots(dphi) {
 // const dots1 = genDots(dPhi);
 // const dotsGold = genDots(dPhiGold);
 
-function drawCircle(c, color = "#00ff88", radius) {
+function drawCircle(c, radius, color = "#00ff88") {
   // const c = toCanvas(z);
   ctx.beginPath();
   ctx.arc(c.x, c.y, radius, 0, Math.PI * 2);
@@ -259,7 +367,8 @@ function drawDotsOld(dots, size) {
 }
 
 function drawDots(dots) {
-  let colorInside = 'white';
+  let colorInside;
+  const colorBorder = `hsl(${hue}, 100%, 50%)`;
 
   for (i = 0; i < dots.length; i++) {
     if (lineFlag && i > 0) {
@@ -267,18 +376,22 @@ function drawDots(dots) {
     }
 
     if (primeFlag && primes.has(i)) {
-      colorInside = 'red';
+      colorInside = 'lime';
     }
     else if (fiboFlag && fibos.has(i)){
       colorInside = 'blue';
     }
     else {
-      colorInside = 'white';
+      // colorInside = `hsl(${hue}, 100%, 50%)`;
+      // colorInside = `hsl(${hue}, 100%, ${90 - 40*i/nSeeds}%)`;
+      colorInside = `hsla(${hue}, 90%, 50%, ${0.2+0.8*i/nSeeds})`;
     }
 
+    // drawCircle(dots[i], rSeeds * (1 + rSeedsFactor*i/dots.length), colorInside);
 
     // drawCircle2(dots[i], rSeeds, 'white', 'black', 2);
-    drawCircle2(dots[i], rSeeds * (1 + 1.0*i/dots.length), colorInside, 'black', 2);
+    // drawCircle2(dots[i], rSeeds * (1 + rSeedsFactor*i/dots.length), colorInside, 'black', 1);
+    drawCircle2(dots[i], rSeeds * (1 + rSeedsFactor*i/dots.length), colorInside, colorBorder, 2);
     // drawCircle2(dotsGold[i], 20 + Math.sqrt(i)*1, 'white', 'black', 2);
     // drawCircle2(dotsGold[i], 40, 'white', 'black', 5);
   }
@@ -290,8 +403,6 @@ function drawDots(dots) {
 
 
 function draw() {
-dPhi = 2 * Math.PI * ratio;
-nCircle = nSeeds * dPhi / (Math.PI * 2);
   const dots1 = genDots(dPhi);
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawDots(dots1);
@@ -305,8 +416,3 @@ slider.addEventListener("change", function() {
   lineFlag = this.checked;
 });
 
-ratioSlider.addEventListener('input', () => {
-  ratio = parseFloat(ratioSlider.value);
-  valueDisplay.textContent = ratio;
-  console.log('Current ratio:', ratio); // optional debug log
-});
