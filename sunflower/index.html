@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-78TW3CD373"></script>
+    <script src="../js/gtag.js"></script>
+
+    <meta charset="UTF-8" />
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0" /> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+    <title>Spirals of Life: An Interactive Seed Pattern Visualizer</title>
+    <meta name="description" content="Interactive Visualizer for Seed Arrangement Patterns" />
+    <meta name="theme-color" content="#22b455" />
+    <link rel="icon" href="../icon/rocket.svg" type="image/svg+xml" />
+    <!-- <link rel="stylesheet" href="style.css"> -->
+
+    <!-- Open Graph for social media preview -->
+    <meta property="og:title" content="Spirals of Life: An Interactive Seed Pattern Visualizer" />
+    <meta property="og:description" content="Interactive Visualizer for Seed Arrangement Patterns" />
+    <meta property="og:url" content="https://y-labz.github.io/sunflower/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://y-labz.github.io/sunflower/preview.jpg" />
+
+    <style>
+    body {
+      margin: 4px;
+      /* background: #020204; */
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      /* min-height: 100vh; */
+    }
+
+    #container, #config {
+      border: 2px solid grey;
+      border-radius: 10px;
+      margin: 4px;
+      box-sizing: border-box;
+      /* box-shadow: 0 0 10px #92e5a1; */
+    }
+
+    #container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    canvas {
+      width: 100%;
+      height: auto;
+      max-width: 100%;
+      image-rendering: pixelated;
+      /* background: #020204; */
+      display: block;
+    }
+
+    #config {
+      color: #22b455;
+      padding: 1rem;
+      overflow-x: auto;
+      overflow-y: auto;
+      font-size: 16px;
+      font-family: "font0", "Courier New", Courier, monospace;
+      line-height: 1.2;
+      scrollbar-width: thin;
+      white-space: pre-wrap;
+      display: inline;
+    }
+
+    #banner {
+      font-size: 0.5rem;
+      line-height: 1;
+    }
+
+    .fancy-switch-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 9999;
+    }
+
+    /* Hide default checkbox */
+    .fancy-switch {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    /* The slider itself */
+    .fancy-slider {
+      position: relative;
+      display: block;
+      width: 52px;
+      height: 28px;
+      background-color: #ccc;
+      border-radius: 34px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .fancy-slider::before {
+      content: "";
+      position: absolute;
+      height: 22px;
+      width: 22px;
+      left: 3px;
+      top: 3px;
+      background-color: white;
+      border-radius: 50%;
+      transition: transform 0.3s ease;
+    }
+
+    /* When checked */
+    .fancy-switch:checked + .fancy-slider {
+      background-color: #22b455;
+    }
+
+    .fancy-switch:checked + .fancy-slider::before {
+      transform: translateX(24px);
+    }
+
+    </style>
+  </head>
+
+  <body>
+
+    <div class="fancy-switch-container">
+      <input type="checkbox" id="fancySwitch" class="fancy-switch">
+      <label for="fancySwitch" class="fancy-slider"></label>
+    </div>
+
+    <!-- <label for="ratioSlider">Ratio:</label> -->
+    <!-- <input type="range" id="ratioSlider" min="0" max="1" step="0.01" value="0.5"> -->
+    <!-- <span id="ratioValue">0.5</span> -->
+
+    <script src="draw.js"></script>
+
+  </body>
+</html>
+
