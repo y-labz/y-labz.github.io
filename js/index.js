@@ -1,10 +1,11 @@
 const folders = [
   "about",
-  "pendulum",
-  "show-me-the-money",
-  "game-of-life",
-  "maze",
   "numbers",
+  "sunflower",
+  "show-me-the-money",
+  "maze",
+  "game-of-life",
+  "pendulum",
   "reader-demo",
 ];
 
