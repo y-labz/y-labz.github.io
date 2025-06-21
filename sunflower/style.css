@@ -38,7 +38,7 @@ canvas {
   overflow-y: auto;
   font-size: 1.2rem;
   font-family: "Courier New", Courier, monospace;
-  line-height: 1.2;
+  /* line-height: 1.2; */
   scrollbar-width: thin;
   white-space: pre-wrap;
   display: inline;
@@ -47,7 +47,7 @@ canvas {
 #banner {
   font-size: 1rem;
   line-height: 1;
-  /* padding-bottom: 40px; */
+  padding-top: 20px;
 }
 
 label {
@@ -56,10 +56,10 @@ label {
 }
 
 .fancy-switch-container {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  z-index: 9999;
+  /* position: fixed; */
+  /* bottom: 20px; */
+  /* right: 20px; */
+  /* z-index: 9999; */
 }
 
 /* Hide default checkbox */
@@ -72,7 +72,8 @@ label {
 /* The slider itself */
 .fancy-slider {
   position: relative;
-  display: block;
+  /* display: block; */
+  display: inline block;
   width: 52px;
   height: 28px;
   background-color: #ccc;
@@ -101,5 +102,4 @@ label {
 .fancy-switch:checked + .fancy-slider::before {
   transform: translateX(24px);
 }
-
 

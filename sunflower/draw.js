@@ -1,5 +1,3 @@
-// 2025.06, y-labz
-//-----------------------------------------------------
 const banner = `
 ░█░░█░░░░█░░█▀▀▄░█▀▀▄░▀▀█
 ░█▄▄█░▀▀░█░░█▄▄█░█▀▀▄░▄▀▒
@@ -12,25 +10,27 @@ const conL = minL - 16; //container length
 const logL = maxL - 16 - conL - 8; //log div length
 const canL = conL - 4; //canvas length
 const origin = {x: canL / 2, y: canL / 2};
+const goldenRatio = (1 + Math.sqrt(5)) * 0.5; //1.618
+const nSeeds = 1000;
 
-let confL = logL * 0.618; //config panel length
+let confL = logL * 0.9; //config panel length
 
 let r0factor = 0.02;
 let r0 = canL * r0factor; //initial radius
 let rMax = canL / 2 - 20 - r0;
 
-const nSeeds = 1000;
-// const nCircle = 40;
-const goldenRatio = (1 + Math.sqrt(5)) * 0.5; //1.618
-const dPhiGold = 2 * Math.PI * (goldenRatio - 1);
-// let ratio = 0.3300; //0~1, UI ratioSlider
 let ratio = goldenRatio - 1;
 let dPhi = 2 * Math.PI * ratio;
 // let nCircle = nSeeds * dPhi / (Math.PI * 2);
 // let rSeeds = 1 * rMax / nCircle;
-let rSeeds = 3;
+let rSeeds = 2;
 let rSeedsFactor = 1; //0~2? UI
 let hue = 210;
+
+let lineFlag = false;
+let primeFlag = false;
+let fiboFlag = false;
+let fermaFlag = false;
 
 //-----------------------------------------------------
 function setupWindow() {
@@ -38,7 +38,6 @@ function setupWindow() {
   container.id = "container";
   container.style.width = conL + "px";
   container.style.height = conL + "px";
-  // document.body.appendChild(container);
 
   // add control panel window Responsive layout
   const confDiv = document.createElement('div');
@@ -61,7 +60,7 @@ function setupWindow() {
     confDiv.style.width = conL + "px";
     confDiv.style.height = logL + "px";
     document.body.appendChild(confDiv);
-    confL = conL * 0.618; //config panel length
+    confL = conL * 0.9; //config panel length
   }
 
   //add canvas here, max L0-border2
@@ -91,7 +90,6 @@ function setupWindow() {
     ratio = parseFloat(slider0.value);
     label0.textContent = `Ratio: ${ratio.toFixed(4)}`;
     dPhi = 2 * Math.PI * ratio;
-    // nCircle = nSeeds * dPhi / (Math.PI * 2);
   });
 
   confDiv.appendChild(label0);
@@ -182,13 +180,11 @@ function setupWindow() {
 
   confDiv.appendChild(label4);
   confDiv.appendChild(slider4);
-
-
-
-
-
-
+  //-----------------------------------------------------
   // Preset values
+  const label5 = document.createElement('label');
+  label5.textContent = "Some preset ratios:";
+
   const presets = {
     '0.33': 0.33,
     '0.333': 0.333,
@@ -202,8 +198,6 @@ function setupWindow() {
     '1/e': 1 / Math.E,
     '1/√2': 1 / Math.sqrt(2)
   };
-
-  // Container for buttons
   const btnContainer = document.createElement('div');
   btnContainer.style.marginTop = '10px';
 
@@ -216,12 +210,141 @@ function setupWindow() {
       label0.textContent = `Ratio: ${ratio.toFixed(4)}`;
       console.log(`Preset selected (${label}):`, ratio);
       dPhi = 2 * Math.PI * ratio;
-      // nCircle = nSeeds * dPhi / (Math.PI * 2);
     });
     btnContainer.appendChild(btn);
   });
 
+  confDiv.appendChild(label5);
   confDiv.appendChild(btnContainer);
+
+  //-----------------------------------------------------
+  // add toggle switch Ferma Spiral...
+  const swDiv3 = document.createElement('div');
+  swDiv3.className = 'fancy-switch-container';
+
+  const sw3 = document.createElement('input');
+  sw3.type = 'checkbox';
+  sw3.id = 'fancySwitch3';
+  sw3.className = 'fancy-switch';
+  sw3.checked = false;
+
+  const swlabel3 = document.createElement('label');
+  swlabel3.setAttribute('for', 'fancySwitch3');
+  swlabel3.className = 'fancy-slider';
+
+  const comment3 = document.createElement('span');
+  comment3.textContent = ' // Toggle Fermat spiral';
+  const wrapper3 = document.createElement('div');
+  wrapper3.style.display = 'flex';
+  wrapper3.style.alignItems = 'end';
+  wrapper3.style.gap = '10px';
+
+  swDiv3.appendChild(sw3);
+  swDiv3.appendChild(swlabel3);
+  wrapper3.appendChild(swDiv3);
+  wrapper3.appendChild(comment3);
+  confDiv.appendChild(wrapper3);
+
+  sw3.addEventListener("change", function() {
+    fermaFlag = this.checked;
+  });
+
+  // add toggle switch primes...
+  const swDiv1 = document.createElement('div');
+  swDiv1.className = 'fancy-switch-container';
+
+  const sw1 = document.createElement('input');
+  sw1.type = 'checkbox';
+  sw1.id = 'fancySwitch1';
+  sw1.className = 'fancy-switch';
+  sw1.checked = false;
+
+  const swlabel1 = document.createElement('label');
+  swlabel1.setAttribute('for', 'fancySwitch1');
+  swlabel1.className = 'fancy-slider';
+
+  const comment1 = document.createElement('span');
+  comment1.textContent = ' // Toggle Prime highlighting';
+  // Create wrapper div for switch and text
+  const wrapper1 = document.createElement('div');
+  wrapper1.style.display = 'flex';
+  wrapper1.style.alignItems = 'end';
+  wrapper1.style.gap = '10px';
+
+  swDiv1.appendChild(sw1);
+  swDiv1.appendChild(swlabel1);
+  wrapper1.appendChild(swDiv1);
+  wrapper1.appendChild(comment1);
+  confDiv.appendChild(wrapper1);
+
+  sw1.addEventListener("change", function() {
+    primeFlag = this.checked;
+  });
+
+  // add toggle switch fibonacci...
+  const swDiv2 = document.createElement('div');
+  swDiv2.className = 'fancy-switch-container';
+
+  const sw2 = document.createElement('input');
+  sw2.type = 'checkbox';
+  sw2.id = 'fancySwitch2';
+  sw2.className = 'fancy-switch';
+  sw2.checked = false;
+
+  const swlabel2 = document.createElement('label');
+  swlabel2.setAttribute('for', 'fancySwitch2');
+  swlabel2.className = 'fancy-slider';
+
+  const comment2 = document.createElement('span');
+  comment2.textContent = ' // Toggle Fibonacci highlighting';
+  // Create wrapper div for switch and text
+  const wrapper2 = document.createElement('div');
+  wrapper2.style.display = 'flex';
+  wrapper2.style.alignItems = 'end';
+  wrapper2.style.gap = '10px';
+
+  swDiv2.appendChild(sw2);
+  swDiv2.appendChild(swlabel2);
+  wrapper2.appendChild(swDiv2);
+  wrapper2.appendChild(comment2);
+  confDiv.appendChild(wrapper2);
+
+  sw2.addEventListener("change", function() {
+    fiboFlag = this.checked;
+  });
+
+  // add toggle switch lines...
+  const swDiv0 = document.createElement('div');
+  swDiv0.className = 'fancy-switch-container';
+
+  const sw0 = document.createElement('input');
+  sw0.type = 'checkbox';
+  sw0.id = 'fancySwitch0';
+  sw0.className = 'fancy-switch';
+  sw0.checked = false;
+
+  const swlabel0 = document.createElement('label');
+  swlabel0.setAttribute('for', 'fancySwitch0');
+  swlabel0.className = 'fancy-slider';
+
+  const comment0 = document.createElement('span');
+  comment0.textContent = ' // Toggle line drawing';
+  // Create wrapper div for switch and text
+  const wrapper0 = document.createElement('div');
+  wrapper0.style.display = 'flex';
+  wrapper0.style.alignItems = 'end';
+  wrapper0.style.gap = '10px'; // space between switch and text
+
+  swDiv0.appendChild(sw0);
+  swDiv0.appendChild(swlabel0);
+  wrapper0.appendChild(swDiv0);
+  wrapper0.appendChild(comment0);
+  confDiv.appendChild(wrapper0);
+
+  sw0.addEventListener("change", function() {
+    lineFlag = this.checked;
+  });
+
 
   // add banner in the end
   const ban = document.createElement('div');
@@ -234,18 +357,6 @@ function setupWindow() {
 setupWindow();
 const canvas = document.getElementById('game');
 const ctx = canvas.getContext('2d');
-
-const ratioSlider = document.getElementById('ratioSlider');
-
-
-//-----------------------------------------------------
-// switch added in html, set default values after page load:
-const slider = document.getElementById('fancySwitch');
-let lineFlag = false;
-slider.checked = false;
-
-let primeFlag = false;
-let fiboFlag = false;
 
 //-----------------------------------------------------
 function isPrime(n) {
@@ -260,6 +371,7 @@ function isPrime(n) {
 
   return true;
 }
+
 function listPrimes(limit) {
   const result = [];
   for (let i = 0; i < limit; i++) {
@@ -281,25 +393,18 @@ function listFibonacci(limit) {
 
 const primes = new Set(listPrimes(nSeeds));
 const fibos = new Set(listFibonacci(nSeeds));
-// const fibos = listFibonacci(nSeeds);
-// console.log(fibos.length);
-// console.log(fibos[fibos.length-1]);
+
 //-----------------------------------------------------
 function polar2xy(r, phi) {
   return {x: r * Math.cos(phi), y: r * Math.sin(phi)};
 }
 
 function spiralArchi(phi) {
-  // const a = 1;
-  // const a = Math.floor((canL*0.5-r0)/(2*Math.PI*nCircle));
   const a = rMax /(nSeeds * dPhi);
   return a * phi + r0;
 }
 
 function spiralFerma(phi) {
-  // const a = 1;
-  // const r0 = 10;
-  // const a = Math.floor((canL*0.5-r0)/(2*Math.PI*nCircle));
   const a = rMax / Math.sqrt(nSeeds * dPhi);
   return a * Math.sqrt(phi) + r0;
 }
@@ -308,23 +413,21 @@ function genDots(dphi) {
   if (dphi === 0) return [];
   const dots = [];
   let phi = 0;
+  let r = 0;
   for (let i = 0; i < nSeeds; i++) {
-  // while (phi <= Math.PI*2*nCircle) {
-    // const f = dphi * i;
-    const r = spiralArchi(phi);
-    // const r = spiralFerma(phi);
+    if (fermaFlag) {
+      r = spiralFerma(phi);
+    } else {
+      r = spiralArchi(phi);
+    }
     const d = polar2xy(r, phi);
-    // dots.push({x: d.x+origin.x, y: d.y+origin.y});
     dots.push({x: d.x+origin.x, y: -d.y+origin.y});
     phi += dphi;
   }
   return dots;
 }
-// const dots1 = genDots(dPhi);
-// const dotsGold = genDots(dPhiGold);
 
 function drawCircle(c, radius, color = "#00ff88") {
-  // const c = toCanvas(z);
   ctx.beginPath();
   ctx.arc(c.x, c.y, radius, 0, Math.PI * 2);
   ctx.fillStyle = color;
@@ -332,7 +435,6 @@ function drawCircle(c, radius, color = "#00ff88") {
 }
 
 function drawCircle2(c, radius, fillColor, strokeColor, lw = 2) {
-  // const c = toCanvas(z);
   ctx.beginPath();
   ctx.arc(c.x, c.y, radius, 0, 2 * Math.PI);
   // Fill
@@ -345,8 +447,6 @@ function drawCircle2(c, radius, fillColor, strokeColor, lw = 2) {
 }
 
 function drawLine(a, b, color = "#00ff88", lw) {
-  // const a = toCanvas(z1);
-  // const b = toCanvas(z2);
   ctx.beginPath();
   ctx.moveTo(a.x, a.y);
   ctx.lineTo(b.x, b.y);
@@ -355,22 +455,12 @@ function drawLine(a, b, color = "#00ff88", lw) {
   ctx.stroke();
 }
 
-function distance(z1, z2) {
-  return Math.hypot(z1.re - z2.re, z1.im - z2.im);
-}
-
-function drawDotsOld(dots, size) {
-  // ctx.fillStyle = "#204829";
-  dots.forEach(co => {
-    ctx.fillRect(co.x, co.y, size, size);
-  });
-}
-
 function drawDots(dots) {
   let colorInside;
   const colorBorder = `hsl(${hue}, 100%, 50%)`;
 
   for (i = 0; i < dots.length; i++) {
+
     if (lineFlag && i > 0) {
       drawLine(dots[i], dots[i-1], 'grey', 1);
     }
@@ -379,7 +469,7 @@ function drawDots(dots) {
       colorInside = 'lime';
     }
     else if (fiboFlag && fibos.has(i)){
-      colorInside = 'blue';
+      colorInside = 'tomato';
     }
     else {
       // colorInside = `hsl(${hue}, 100%, 50%)`;
@@ -391,16 +481,11 @@ function drawDots(dots) {
 
     // drawCircle2(dots[i], rSeeds, 'white', 'black', 2);
     // drawCircle2(dots[i], rSeeds * (1 + rSeedsFactor*i/dots.length), colorInside, 'black', 1);
-    drawCircle2(dots[i], rSeeds * (1 + rSeedsFactor*i/dots.length), colorInside, colorBorder, 2);
+    drawCircle2(dots[i], rSeeds * (1 + rSeedsFactor*i/nSeeds), colorInside, colorBorder, 2);
     // drawCircle2(dotsGold[i], 20 + Math.sqrt(i)*1, 'white', 'black', 2);
     // drawCircle2(dotsGold[i], 40, 'white', 'black', 5);
   }
-
-  // dotsGold.forEach(d => {
-  //   drawCircle2(d, 10, 'white', 'black', 2);
-  // });
 }
-
 
 function draw() {
   const dots1 = genDots(dPhi);
@@ -408,11 +493,5 @@ function draw() {
   drawDots(dots1);
   requestAnimationFrame(draw);
 }
+
 draw();
-
-//-----------------------------------------------------
-
-slider.addEventListener("change", function() {
-  lineFlag = this.checked;
-});
-
