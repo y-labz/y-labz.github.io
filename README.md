@@ -10,7 +10,7 @@ This project is licensed for **private and non-commercial use** under a custom l
 If you're just tinkering, learning, or having fun — enjoy it freely.
 
 **But!** If you plan to **make money** with it — whether through products, services, ads, or anything that jingles:
-> ✉️ Please [contact me](mailto:professor.dr.y@gmail.com) to request a commercial license.  
+> ✉️ Please [contact me](mailto:peteryuan2010@gmail.com) to request a commercial license.  
 > 🧾 I may require permission and a share of the revenue.
 
 > ⚠️ **Important:**  
