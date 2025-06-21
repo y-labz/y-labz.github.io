@@ -25,7 +25,7 @@ let dPhi = 2 * Math.PI * ratio;
 // let rSeeds = 1 * rMax / nCircle;
 let rSeeds = 2;
 let rSeedsFactor = 1; //0~2? UI
-let hue = 210;
+let hue = 24;
 
 let lineFlag = false;
 let primeFlag = false;
@@ -233,7 +233,7 @@ function setupWindow() {
   swlabel3.className = 'fancy-slider';
 
   const comment3 = document.createElement('span');
-  comment3.textContent = ' // Toggle Fermat spiral';
+  comment3.textContent = ' Fermat spiral';
   const wrapper3 = document.createElement('div');
   wrapper3.style.display = 'flex';
   wrapper3.style.alignItems = 'end';
@@ -264,7 +264,7 @@ function setupWindow() {
   swlabel1.className = 'fancy-slider';
 
   const comment1 = document.createElement('span');
-  comment1.textContent = ' // Toggle Prime highlighting';
+  comment1.textContent = ' Mark Prime';
   // Create wrapper div for switch and text
   const wrapper1 = document.createElement('div');
   wrapper1.style.display = 'flex';
@@ -296,7 +296,7 @@ function setupWindow() {
   swlabel2.className = 'fancy-slider';
 
   const comment2 = document.createElement('span');
-  comment2.textContent = ' // Toggle Fibonacci highlighting';
+  comment2.textContent = ' Mark Fibonacci';
   // Create wrapper div for switch and text
   const wrapper2 = document.createElement('div');
   wrapper2.style.display = 'flex';
@@ -328,7 +328,7 @@ function setupWindow() {
   swlabel0.className = 'fancy-slider';
 
   const comment0 = document.createElement('span');
-  comment0.textContent = ' // Toggle line drawing';
+  comment0.textContent = ' Draw lines';
   // Create wrapper div for switch and text
   const wrapper0 = document.createElement('div');
   wrapper0.style.display = 'flex';
