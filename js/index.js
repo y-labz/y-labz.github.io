@@ -163,6 +163,10 @@ function spin() {
   const bar = document.getElementById('statusbar');
   const spinner = ['|', '/', '-', '\\'];
   let index = 0;
+  bar.style.color = '#FF9E64';
+  bar.style.backgroundColor = '#373640';
+  // bar.style.color = 'rgba(255, 158, 100, 1)';
+  // bar.style.backgroundColor = 'rgba(255, 158, 100, 0.5)';
 
   spinInterval = setInterval(() => {
     const spinChar = spinner[index % spinner.length];
@@ -225,6 +229,10 @@ async function main() {
   if (pageList && pageList.length > 1) {
     clearInterval(spinInterval);
     bar.textContent = `[ fetching contents done: ${pageList.length} pages listed. ]`;
+    // bar.style.color = 'rgba(13, 185, 215, 1)';
+    // bar.style.backgroundColor = 'rgba(13, 185, 215, 0.5)';
+    bar.style.color = '#0DB9D7';
+    bar.style.backgroundColor = '#22374B';
 
     for (const page of pageList) {
       await simlog("\n");
