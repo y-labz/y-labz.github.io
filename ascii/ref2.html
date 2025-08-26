@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Image Fun Zone: ASCII & Dithering</title>
+  <style>
+    body { background: #111; color: #eee; font-family: monospace; padding: 2em; }
+    canvas { margin: 1em 0; border: 1px solid #444; }
+    pre#asciiOutput {
+      white-space: pre-wrap;
+      font-size: 6px;
+      line-height: 6px;
+      letter-spacing: 0px;
+      /* color: lime; */
+      background: white;
+      padding: 1em;
+      overflow-x: auto;
+    }
+    .buttons { margin: 1em 0; }
+    .buttons button { margin-right: 10px; }
+    .pixel { display: inline-block; width: 6px; height: 6px; font-size: 6px; line-height: 6px; }
+  </style>
+</head>
+<body>
+  <h1>✨ Image Transformer ✨</h1>
+  <input type="file" id="upload" accept="image/*" />
+
+  <h3>🎨 Original Image</h3>
+  <canvas id="originalCanvas"></canvas>
+
+  <h3>📜 ASCII Art</h3>
+  <pre id="asciiOutput"></pre>
+
+  <script>
+    const upload = document.getElementById('upload');
+    const originalCanvas = document.getElementById('originalCanvas');
+    const asciiOutput = document.getElementById('asciiOutput');
+    let img = new Image();
+
+    function init() {
+      img.src = "Famous16289.jpg";
+      const ctx = originalCanvas.getContext('2d');
+      img.onload = function() {
+        originalCanvas.width = img.width;
+        originalCanvas.height = img.height;
+        ctx.drawImage(img, 0, 0);
+        generateASCII();
+      };
+    }
+    init();
+
+    upload.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.onload = () => {
+        img.onload = () => {
+          originalCanvas.width = img.width;
+          originalCanvas.height = img.height;
+          const ctx = originalCanvas.getContext('2d');
+          ctx.drawImage(img, 0, 0);
+          generateASCII();
+        };
+        img.src = reader.result;
+      };
+      if (file) reader.readAsDataURL(file);
+    });
+
+    const asciiChars = ['@', '#', 'S', '%', '?', '*', '+', ';', ':', ',', '.'];
+
+    function posterize(value, levels) {
+      return Math.floor(value / (256 / levels)) * (256 / levels);
+    }
+
+    function generateASCII() {
+      const ctx = originalCanvas.getContext('2d');
+      const width = originalCanvas.width;
+      const height = originalCanvas.height;
+      const scale = 0.5;
+      const w = Math.floor(width * scale);
+      const h = Math.floor(height * scale);
+
+      const tempCanvas = document.createElement('canvas');
+      tempCanvas.width = w;
+      tempCanvas.height = h;
+      const tempCtx = tempCanvas.getContext('2d');
+      tempCtx.drawImage(originalCanvas, 0, 0, w, h);
+      const imageData = tempCtx.getImageData(0, 0, w, h);
+      const data = imageData.data;
+
+      asciiOutput.innerHTML = '';
+      for (let y = 0; y < h; y++) {
+        for (let x = 0; x < w; x++) {
+          const i = (y * w + x) * 4;
+          const r = posterize(data[i], 5);
+          const g = posterize(data[i + 1], 5);
+          const b = posterize(data[i + 2], 5);
+
+          const brightness = 0.299 * r + 0.587 * g + 0.114 * b;
+          //const index = Math.floor((1 - brightness / 255) * (asciiChars.length - 1));
+          const index = Math.floor((brightness / 255) * (asciiChars.length - 1));
+          const char = asciiChars[index];
+
+          const span = document.createElement('span');
+          span.className = 'pixel';
+          span.textContent = char;
+          span.style.color = `rgb(${r}, ${g}, ${b})`;
+          span.style.color = 'black';
+          //span.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+          //span.style.backgroundColor = `rgb(${255 - r}, ${255 - g}, ${255 - b})`;
+
+          asciiOutput.appendChild(span);
+        }
+        asciiOutput.appendChild(document.createElement('br'));
+      }
+    }
+  </script>
+</body>
+</html>

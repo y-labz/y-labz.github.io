@@ -1,5 +1,4 @@
 const folders = [
-  "about",
   "numbers",
   "sunflower",
   "show-me-the-money",
@@ -7,6 +6,7 @@ const folders = [
   "game-of-life",
   "pendulum",
   "reader-demo",
+  "about",
 ];
 
 const banner = `
